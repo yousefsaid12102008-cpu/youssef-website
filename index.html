@@ -1,0 +1,661 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<title>Youssef Finance | إدارة أموالك</title>
+<style>
+:root{
+ --bg:#080e19;--panel:#111a2b;--panel2:#172238;--line:#26334b;
+ --gold:#e4bd70;--gold2:#f5dca4;--text:#f4f6fb;--muted:#93a1b8;
+ --green:#42d6a0;--red:#ff7385;--blue:#8ab7ff;--radius:18px
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold)}
+.hidden{display:none!important}
+.app{min-height:100vh}
+.sidebar{position:fixed;right:0;top:0;bottom:0;width:255px;background:#0d1524;border-left:1px solid var(--line);padding:24px 16px;z-index:20;display:flex;flex-direction:column;transition:.25s}
+.brand{display:flex;align-items:center;gap:12px;padding:5px 7px 25px}
+.brand-logo{width:44px;height:44px;border-radius:15px;background:linear-gradient(135deg,#f7dfa7,#bd9146);color:#101727;display:grid;place-items:center;font-size:24px;font-weight:900;box-shadow:0 5px 25px #e4bd7020}
+.brand-name{font-weight:850;font-size:17px;letter-spacing:.1px}
+.brand-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.nav-label{color:#64738b;font-size:11px;padding:8px 12px 10px}
+.nav{display:flex;flex-direction:column;gap:6px}
+.nav-btn{border:1px solid transparent;background:transparent;color:#aab6ca;border-radius:12px;padding:12px 13px;display:flex;align-items:center;gap:12px;text-align:right;width:100%;transition:.2s}
+.nav-btn .ico{width:23px;text-align:center;font-size:18px}
+.nav-btn:hover{background:#ffffff08;color:white}
+.nav-btn.active{background:linear-gradient(100deg,#e4bd701c,#e4bd7008);border-color:#e4bd7033;color:var(--gold2)}
+.nav-btn.active .ico{color:var(--gold)}
+.side-bottom{margin-top:auto}
+.secure-note{border:1px solid var(--line);background:#ffffff04;border-radius:14px;padding:13px;font-size:11px;color:var(--muted);line-height:1.9}
+.main{margin-right:255px;min-height:100vh;padding:27px 30px 45px;max-width:1800px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:27px}
+.top-title{font-size:23px;font-weight:850;letter-spacing:-.4px}
+.top-sub{color:var(--muted);font-size:12px;margin-top:5px}
+.top-actions{display:flex;align-items:center;gap:10px}
+.icon-btn{width:43px;height:43px;border-radius:13px;background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:19px}
+.avatar{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:#e4bd701c;border:1px solid #e4bd7045;color:var(--gold);font-weight:900}
+.menu-toggle{display:none}
+.page{display:none;animation:appear .22s ease}
+.page.active{display:block}
+@keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.welcome{position:relative;overflow:hidden;border:1px solid #d8b56c35;background:linear-gradient(115deg,#1c2a42,#101a2c 70%,#182238);border-radius:22px;padding:27px;margin-bottom:22px}
+.welcome:after{content:"";position:absolute;width:240px;height:240px;border:1px solid #e4bd701c;border-radius:50%;left:-75px;top:-130px;box-shadow:0 0 0 25px #e4bd7005,0 0 0 50px #e4bd7004}
+.eyebrow{font-size:11px;color:var(--gold);letter-spacing:1.5px;font-weight:800}
+.welcome h2{font-size:25px;margin:12px 0 8px;position:relative;z-index:1}
+.welcome p{margin:0;color:#b1bfd2;font-size:13px;line-height:1.8;position:relative;z-index:1}
+.welcome-bottom{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-top:23px;position:relative;z-index:1;flex-wrap:wrap}
+.date-chip{font-size:12px;color:#d6dfed;background:#ffffff09;border:1px solid #ffffff12;border-radius:10px;padding:9px 12px}
+.btn{border:0;border-radius:12px;padding:11px 15px;font-size:12px;font-weight:800;transition:.2s;display:inline-flex;justify-content:center;align-items:center;gap:7px}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.btn-gold{background:linear-gradient(135deg,#f1d496,#d3a853);color:#101727}
+.btn-dark{background:var(--panel2);border:1px solid var(--line);color:var(--text)}
+.btn-danger{background:#ff738516;border:1px solid #ff73853a;color:var(--red)}
+.btn-small{padding:8px 10px;font-size:11px;border-radius:9px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;min-width:0;position:relative;overflow:hidden}
+.stat-head{display:flex;justify-content:space-between;align-items:center;gap:7px;color:var(--muted);font-size:12px}
+.stat-icon{width:35px;height:35px;display:grid;place-items:center;border-radius:11px;background:#ffffff09;font-size:18px}
+.stat-value{font-size:clamp(17px,2vw,25px);font-weight:850;letter-spacing:-.5px;margin:19px 0 8px;overflow-wrap:anywhere}
+.stat-foot{font-size:11px;color:var(--muted)}
+.gold{color:var(--gold)}.green{color:var(--green)}.red{color:var(--red)}.blue{color:var(--blue)}
+.grid-2{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:18px;margin-bottom:20px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;min-width:0}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.card-title{font-size:15px;font-weight:850}
+.card-sub{font-size:11px;color:var(--muted);margin-top:5px}
+.month-select{border:1px solid var(--line);background:#0c1422;color:var(--text);border-radius:10px;padding:9px 11px;max-width:180px}
+.chart{height:180px;display:flex;align-items:stretch;gap:9px;padding-top:10px}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0;gap:8px}
+.chart-value{font-size:10px;color:var(--muted);height:15px;white-space:nowrap}
+.bar-track{height:125px;width:min(100%,29px);display:flex;align-items:flex-end;border-radius:7px;background:#ffffff04;overflow:hidden}
+.bar{width:100%;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,#f1d496,#b8893c);min-height:0;transition:height .35s}
+.chart-label{font-size:10px;color:var(--muted)}
+.donut-wrap{display:flex;align-items:center;gap:20px;min-height:180px}
+.donut{width:142px;height:142px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;position:relative;background:conic-gradient(#e4bd70 0deg,#26334b 0deg)}
+.donut:before{content:"";position:absolute;width:103px;height:103px;border-radius:50%;background:var(--panel)}
+.donut-center{position:relative;text-align:center;z-index:1}
+.donut-total{font-weight:850;font-size:17px}
+.donut-label{color:var(--muted);font-size:10px;margin-top:4px}
+.legend{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+.legend-row{display:flex;align-items:center;gap:8px;font-size:11px;color:#cbd4e3}
+.dot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.legend-row .amount{margin-right:auto;color:var(--muted);font-variant-numeric:tabular-nums}
+.table-wrap{overflow-x:auto;width:100%}
+table{border-collapse:collapse;width:100%;min-width:500px}
+th{text-align:right;color:#77869e;font-size:11px;font-weight:650;padding:12px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:14px 10px;border-bottom:1px solid #ffffff08;font-size:12px;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#ffffff03}
+.type-badge{display:inline-flex;padding:5px 8px;border-radius:7px;font-size:10px;font-weight:800}
+.type-income{background:#42d6a015;color:var(--green)}
+.type-expense{background:#ff738515;color:var(--red)}
+.row-title{font-weight:750}.row-sub{font-size:10px;color:var(--muted);margin-top:4px}
+.actions{display:flex;gap:6px}
+.text-btn{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 9px;font-size:11px}
+.text-btn:hover{color:var(--gold);border-color:#e4bd7055}
+.section-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin:0 0 20px}
+.section-heading h2{font-size:21px;margin:0 0 7px}
+.section-heading p{font-size:12px;color:var(--muted);margin:0}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.field label{font-size:12px;color:#c6d0df}
+.field input,.field select,.field textarea{width:100%;background:#0a1220;border:1px solid var(--line);border-radius:11px;color:var(--text);padding:12px;min-width:0}
+.field input::placeholder{color:#66748b}
+.field select option{background:#101a2b}
+.search{flex:1;min-width:160px}
+.month-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.month-card{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:17px;text-align:right;color:var(--text);transition:.2s}
+.month-card:hover,.month-card.selected{border-color:#e4bd7066;background:#18243a}
+.month-card.selected{box-shadow:inset 0 0 0 1px #e4bd7020}
+.month-name{font-weight:850;font-size:14px}
+.month-year{font-size:10px;color:var(--muted);margin-top:4px}
+.month-total{font-size:19px;font-weight:850;margin:17px 0 6px}
+.month-mini{display:flex;justify-content:space-between;gap:8px;font-size:10px;color:var(--muted)}
+.progress{height:5px;border-radius:9px;background:#ffffff0b;overflow:hidden;margin-top:13px}
+.progress span{height:100%;display:block;background:linear-gradient(90deg,#b8893c,#f5dca4);border-radius:9px}
+.budget-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.budget-card{background:var(--panel);border:1px solid var(--line);padding:19px;border-radius:16px}
+.budget-number{font-size:24px;font-weight:850;margin:13px 0}
+.budget-meta{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted)}
+.empty{text-align:center;padding:35px 12px;color:var(--muted);font-size:12px}
+.empty .empty-icon{font-size:28px;margin-bottom:9px}
+.modal-backdrop{position:fixed;inset:0;background:#000b;z-index:60;display:grid;place-items:center;padding:15px;overflow:auto}
+.modal{width:min(100%,500px);background:#111a2b;border:1px solid #34435c;border-radius:21px;padding:23px;box-shadow:0 25px 100px #0008;max-height:94vh;overflow:auto}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.modal-head h3{font-size:19px;margin:0}
+.close{background:#ffffff09;border:1px solid var(--line);color:var(--text);border-radius:10px;width:35px;height:35px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.full{grid-column:1/-1}
+.form-actions{display:flex;gap:9px;margin-top:20px}
+.form-actions .btn{flex:1}
+.notice{font-size:11px;line-height:1.8;color:var(--muted);background:#ffffff05;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:16px}
+.login-screen{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse at 15% 10%,#273650 0,transparent 40%),var(--bg)}
+.login-card{width:min(100%,410px);background:#111a2b;border:1px solid #35435b;border-radius:25px;padding:29px;box-shadow:0 25px 90px #0005}
+.login-brand{text-align:center;margin-bottom:25px}
+.login-brand .brand-logo{margin:0 auto 13px;width:59px;height:59px;font-size:30px}
+.login-brand h1{font-size:23px;margin:0}
+.login-brand p{color:var(--muted);font-size:12px;line-height:1.8}
+.login-fields{display:flex;flex-direction:column;gap:15px}
+.login-fields .btn{width:100%;margin-top:4px;padding:14px}
+.login-foot{text-align:center;color:#65748b;font-size:10px;margin-top:20px;line-height:1.8}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:100;background:#1b2a40;border:1px solid #45536b;border-radius:12px;padding:12px 19px;font-size:12px;transition:.25s;max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.mobile-overlay{display:none}
+.footer{text-align:center;color:#53627a;font-size:10px;margin-top:30px}
+@media(max-width:1100px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-2{grid-template-columns:1fr}.main{padding:22px}}
+@media(max-width:700px){
+ .sidebar{transform:translateX(105%);width:270px;box-shadow:none}
+ .sidebar.open{transform:translateX(0);box-shadow:-20px 0 70px #0007}
+ .mobile-overlay.show{display:block;position:fixed;inset:0;background:#0009;z-index:19}
+ .main{margin-right:0;padding:17px 13px 35px}
+ .menu-toggle{display:block}
+ .topbar{margin-bottom:20px}
+ .top-title{font-size:19px}
+ .top-sub{font-size:10px}
+ .top-actions{gap:7px}
+ .avatar{width:38px;height:38px}
+ .icon-btn{width:38px;height:38px}
+ .welcome{padding:21px 18px}
+ .welcome h2{font-size:22px}
+ .stats{gap:10px}
+ .stat{padding:14px}
+ .stat-value{font-size:20px;margin:15px 0 7px}
+ .stat-head{font-size:10px}
+ .stat-icon{width:30px;height:30px}
+ .card{padding:15px}
+ .donut-wrap{gap:12px}
+ .donut{width:118px;height:118px}
+ .donut:before{width:85px;height:85px}
+ .donut-total{font-size:14px}
+ .month-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .month-card{padding:13px}
+ .month-total{font-size:16px}
+ .budget-grid{grid-template-columns:1fr}
+ .section-heading h2{font-size:19px}
+ .form-grid{grid-template-columns:1fr}
+ .full{grid-column:auto}
+ .modal{padding:19px}
+}
+@media(max-width:360px){.stats{grid-template-columns:1fr}.month-grid{grid-template-columns:1fr}.donut-wrap{flex-direction:column}.legend{width:100%}}
+</style>
+</head>
+<body>
+
+<section id="loginScreen" class="login-screen">
+ <div class="login-card">
+  <div class="login-brand">
+   <div class="brand-logo">Y</div>
+   <h1>Youssef <span class="gold">Finance</span></h1>
+   <p id="loginSubtitle">مساحتك الشخصية لإدارة أموالك<br>كل تفاصيلك المالية في مكان واحد.</p>
+  </div>
+  <form id="loginForm" class="login-fields">
+   <div class="field" id="nameField">
+    <label for="ownerName">اسمك</label>
+    <input id="ownerName" maxlength="40" placeholder="مثلاً: يوسف سعيد" autocomplete="name">
+   </div>
+   <div class="field">
+    <label for="password">كلمة المرور</label>
+    <input id="password" type="password" minlength="6" maxlength="100" required placeholder="6 أحرف أو أرقام على الأقل" autocomplete="current-password">
+   </div>
+   <div class="field hidden" id="confirmField">
+    <label for="confirmPassword">تأكيد كلمة المرور</label>
+    <input id="confirmPassword" type="password" minlength="6" maxlength="100" placeholder="اكتب كلمة المرور مرة أخرى">
+   </div>
+   <button class="btn btn-gold" id="loginSubmit" type="submit">دخول إلى حسابي ←</button>
+  </form>
+  <div class="login-foot">YF · PERSONAL FINANCE<br>تنبيه: كلمة المرور المحلية ليست نظام حماية آمنًا للبيانات الحساسة.</div>
+ </div>
+</section>
+
+<div id="app" class="app hidden">
+ <div class="mobile-overlay" id="mobileOverlay"></div>
+ <aside class="sidebar" id="sidebar">
+  <div class="brand">
+   <div class="brand-logo">Y</div>
+   <div><div class="brand-name">Youssef Finance</div><div class="brand-sub">PERSONAL FINANCE</div></div>
+  </div>
+  <div class="nav-label">القائمة الرئيسية</div>
+  <nav class="nav">
+   <button class="nav-btn active" data-page="dashboard"><span class="ico">⌂</span>الرئيسية</button>
+   <button class="nav-btn" data-page="transactions"><span class="ico">⇄</span>المعاملات المالية</button>
+   <button class="nav-btn" data-page="months"><span class="ico">▦</span>الشهور والتفاصيل</button>
+   <button class="nav-btn" data-page="reports"><span class="ico">▥</span>التقارير والتحليل</button>
+   <button class="nav-btn" data-page="budgets"><span class="ico">◎</span>الميزانيات</button>
+   <button class="nav-btn" data-page="settings"><span class="ico">⚙</span>الإعدادات والنسخ</button>
+  </nav>
+  <div class="side-bottom">
+   <div class="secure-note">✦ <b class="gold">مساحتك المالية</b><br>سجّل معاملاتك وتابع مصروفاتك شهرًا بشهر.</div>
+   <button class="nav-btn" id="logoutBtn" style="margin-top:12px"><span class="ico">↪</span>تسجيل الخروج</button>
+  </div>
+ </aside>
+
+ <main class="main">
+  <header class="topbar">
+   <div style="display:flex;align-items:center;gap:12px">
+    <button class="icon-btn menu-toggle" id="menuToggle" aria-label="فتح القائمة">☰</button>
+    <div><div class="top-title" id="pageTitle">الرئيسية</div><div class="top-sub" id="pageSubtitle">نظرة عامة على وضعك المالي</div></div>
+   </div>
+   <div class="top-actions">
+    <button class="btn btn-gold" id="quickAdd">＋ <span>إضافة عملية</span></button>
+    <div class="avatar" id="avatar">Y</div>
+   </div>
+  </header>
+
+  <section class="page active" id="page-dashboard">
+   <div class="welcome">
+    <div class="eyebrow">YOUR FINANCIAL SPACE</div>
+    <h2 id="welcomeTitle">أهلاً بيك يا بشمهندس يوسف ✦</h2>
+    <p>كل جنيه له حكاية. تابع دخلك ومصروفاتك وخلي قراراتك المالية أوضح.</p>
+    <div class="welcome-bottom"><div class="date-chip" id="todayText">اليوم</div><button class="btn btn-gold" id="welcomeAdd">＋ سجّل عملية جديدة</button></div>
+   </div>
+   <div class="stats">
+    <div class="stat"><div class="stat-head">إجمالي الرصيد <span class="stat-icon gold">◈</span></div><div class="stat-value gold" id="totalBalance">0.00 ج.م</div><div class="stat-foot">صافي كل معاملاتك المسجلة</div></div>
+    <div class="stat"><div class="stat-head">دخل الشهر <span class="stat-icon green">↗</span></div><div class="stat-value green" id="monthIncome">0.00 ج.م</div><div class="stat-foot" id="incomeFoot">إجمالي الدخل المسجل</div></div>
+    <div class="stat"><div class="stat-head">مصروفات الشهر <span class="stat-icon red">↘</span></div><div class="stat-value red" id="monthExpense">0.00 ج.م</div><div class="stat-foot" id="expenseFoot">إجمالي الإنفاق المسجل</div></div>
+    <div class="stat"><div class="stat-head">المتبقي من الميزانية <span class="stat-icon blue">◎</span></div><div class="stat-value blue" id="budgetRemaining">—</div><div class="stat-foot" id="budgetFoot">حدد ميزانية للشهر</div></div>
+   </div>
+   <div class="grid-2">
+    <div class="card">
+     <div class="card-head"><div><div class="card-title">حركة المصروفات</div><div class="card-sub">مقارنة مصروفات آخر 6 شهور</div></div><span class="gold">▥</span></div>
+     <div id="expenseChart" class="chart"></div>
+    </div>
+    <div class="card">
+     <div class="card-head"><div><div class="card-title">توزيع المصروفات</div><div class="card-sub">تصنيفات إنفاق الشهر الحالي</div></div></div>
+     <div class="donut-wrap"><div class="donut" id="expenseDonut"><div class="donut-center"><div class="donut-total" id="donutTotal">0</div><div class="donut-label">إجمالي الإنفاق</div></div></div><div class="legend" id="expenseLegend"></div></div>
+    </div>
+   </div>
+   <div class="card">
+    <div class="card-head"><div><div class="card-title">آخر المعاملات</div><div class="card-sub">أحدث الحركات المالية المسجلة</div></div><button class="btn btn-dark btn-small" data-goto="transactions">عرض الكل ←</button></div>
+    <div class="table-wrap"><table><thead><tr><th>العملية</th><th>التصنيف</th><th>التاريخ</th><th>المبلغ</th><th>النوع</th></tr></thead><tbody id="recentBody"></tbody></table></div>
+   </div>
+  </section>
+
+  <section class="page" id="page-transactions">
+   <div class="section-heading"><div><h2>المعاملات المالية</h2><p>سجّل كل دخل أو مصروف وراجع تفاصيله.</p></div><button class="btn btn-gold" id="transactionsAdd">＋ إضافة معاملة</button></div>
+   <div class="card">
+    <div class="toolbar">
+     <input class="month-select search" id="transactionSearch" placeholder="⌕ ابحث بالوصف أو التصنيف...">
+     <select class="month-select" id="typeFilter"><option value="all">كل الأنواع</option><option value="income">الدخل فقط</option><option value="expense">المصروفات فقط</option></select>
+     <input class="month-select" id="transactionMonth" type="month" aria-label="فلترة بالشهر">
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>العملية</th><th>التصنيف</th><th>التاريخ</th><th>المبلغ</th><th>النوع</th><th>إجراءات</th></tr></thead><tbody id="transactionsBody"></tbody></table></div>
+    <div class="notice" id="transactionCount"></div>
+   </div>
+  </section>
+
+  <section class="page" id="page-months">
+   <div class="section-heading"><div><h2>الشهور والتفاصيل</h2><p>اختار أي شهر عشان تعرف دخلت كام وصرفت كام.</p></div><input class="month-select" id="monthYear" type="number" min="2000" max="2100" style="width:115px" aria-label="السنة"></div>
+   <div class="month-grid" id="monthGrid"></div>
+   <div class="card" style="margin-top:20px">
+    <div class="card-head"><div><div class="card-title" id="selectedMonthTitle">تفاصيل الشهر</div><div class="card-sub">كل العمليات المسجلة خلال الشهر المحدد</div></div><button class="btn btn-dark btn-small" id="monthExport">تصدير CSV</button></div>
+    <div class="stats" style="margin-bottom:15px">
+     <div class="stat"><div class="stat-head">الدخل</div><div class="stat-value green" id="detailIncome">0 ج.م</div></div>
+     <div class="stat"><div class="stat-head">المصروفات</div><div class="stat-value red" id="detailExpense">0 ج.م</div></div>
+     <div class="stat"><div class="stat-head">الصافي</div><div class="stat-value gold" id="detailNet">0 ج.م</div></div>
+     <div class="stat"><div class="stat-head">عدد العمليات</div><div class="stat-value" id="detailCount">0</div></div>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>العملية</th><th>التصنيف</th><th>التاريخ</th><th>المبلغ</th><th>النوع</th><th>إجراءات</th></tr></thead><tbody id="monthBody"></tbody></table></div>
+   </div>
+  </section>
+
+  <section class="page" id="page-reports">
+   <div class="section-heading"><div><h2>التقارير والتحليل</h2><p>افهم نمط إنفاقك من بياناتك الفعلية.</p></div><input class="month-select" id="reportMonth" type="month"></div>
+   <div class="stats">
+    <div class="stat"><div class="stat-head">دخل الفترة</div><div class="stat-value green" id="reportIncome">0 ج.م</div></div>
+    <div class="stat"><div class="stat-head">مصروفات الفترة</div><div class="stat-value red" id="reportExpense">0 ج.م</div></div>
+    <div class="stat"><div class="stat-head">صافي الفترة</div><div class="stat-value gold" id="reportNet">0 ج.م</div></div>
+    <div class="stat"><div class="stat-head">عدد العمليات</div><div class="stat-value" id="reportCount">0</div></div>
+   </div>
+   <div class="grid-2">
+    <div class="card"><div class="card-head"><div><div class="card-title">المصروفات حسب التصنيف</div><div class="card-sub">ترتيب تنازلي حسب المبلغ</div></div></div><div id="reportCategories"></div></div>
+    <div class="card"><div class="card-head"><div><div class="card-title">ملخص الشهر</div><div class="card-sub">توزيع الدخل والإنفاق</div></div></div><div id="reportSummary"></div></div>
+   </div>
+  </section>
+
+  <section class="page" id="page-budgets">
+   <div class="section-heading"><div><h2>الميزانيات</h2><p>حدد حد الإنفاق الشهري وتابع المتبقي.</p></div><button class="btn btn-gold" id="setBudget">＋ تحديد الميزانية</button></div>
+   <div class="card" style="margin-bottom:18px">
+    <div class="card-head"><div><div class="card-title">ميزانية الشهر</div><div class="card-sub" id="budgetMonthLabel"></div></div><button class="btn btn-dark btn-small" id="editBudget">تعديل الميزانية</button></div>
+    <div class="stat-value gold" id="budgetBig">لم تحدد ميزانية</div>
+    <div class="budget-meta"><span id="budgetSpent">المنفق: 0 ج.م</span><span id="budgetPercent">0%</span></div>
+    <div class="progress"><span id="budgetProgress" style="width:0%"></span></div>
+    <div class="notice" id="budgetMessage">حدد ميزانية عشان تبدأ تتابع إنفاقك.</div>
+   </div>
+   <div class="section-heading"><div><h2>ملخص الميزانيات</h2><p>مقارنة الميزانية بالمصروفات لكل شهر.</p></div></div>
+   <div class="budget-grid" id="budgetHistory"></div>
+  </section>
+
+  <section class="page" id="page-settings">
+   <div class="section-heading"><div><h2>الإعدادات والنسخ الاحتياطي</h2><p>إدارة بياناتك المحلية وتصديرها.</p></div></div>
+   <div class="grid-2">
+    <div class="card">
+     <div class="card-head"><div><div class="card-title">الملف الشخصي</div><div class="card-sub">تخصيص اسم لوحة التحكم</div></div></div>
+     <form id="profileForm" class="login-fields">
+      <div class="field"><label for="settingsName">الاسم الظاهر</label><input id="settingsName" maxlength="40" required></div>
+      <button class="btn btn-gold" type="submit">حفظ الاسم</button>
+     </form>
+     <div class="notice">تُحفظ البيانات على هذا المتصفح فقط في النسخة الحالية.</div>
+    </div>
+    <div class="card">
+     <div class="card-head"><div><div class="card-title">النسخ الاحتياطي</div><div class="card-sub">احتفظ بنسخة من معاملاتك</div></div></div>
+     <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-gold" id="exportJSON">⇩ تنزيل نسخة احتياطية JSON</button>
+      <button class="btn btn-dark" id="exportAllCSV">⇩ تصدير المعاملات CSV</button>
+      <label class="btn btn-dark" for="importFile">⇧ استيراد نسخة JSON</label><input id="importFile" type="file" accept=".json,application/json" class="hidden">
+     </div>
+     <div class="notice">الاستيراد يستبدل البيانات الحالية. نزّل نسخة قبل الاستيراد للاحتفاظ ببياناتك القديمة.</div>
+    </div>
+   </div>
+   <div class="card" style="margin-bottom:18px">
+    <div class="card-head"><div><div class="card-title">الأمان المحلي</div><div class="card-sub">تغيير كلمة المرور على هذا المتصفح</div></div></div>
+    <form id="passwordForm" class="form-grid">
+     <div class="field"><label for="oldPassword">كلمة المرور الحالية</label><input id="oldPassword" type="password" required></div>
+     <div class="field"><label for="newPassword">كلمة المرور الجديدة</label><input id="newPassword" type="password" minlength="6" maxlength="100" required></div>
+     <div class="field full"><button class="btn btn-gold" type="submit">تغيير كلمة المرور</button></div>
+    </form>
+   </div>
+   <div class="card">
+    <div class="card-head"><div><div class="card-title red">منطقة البيانات</div><div class="card-sub">الإجراء التالي لا يمكن التراجع عنه.</div></div></div>
+    <button class="btn btn-danger" id="clearTransactions">حذف جميع المعاملات والميزانيات</button>
+    <div class="notice">مهم: كلمة المرور هنا ليست تشفيرًا آمنًا، والبيانات في LocalStorage يمكن لمن لديه وصول للمتصفح أن يطّلع عليها. لا تستخدمها لحماية معلومات مالية حساسة. يلزم خادم وقواعد صلاحيات آمنة لحماية حقيقية.</div>
+   </div>
+  </section>
+
+  <div class="footer">YOUSSEF FINANCE · YOUR MONEY, YOUR CLARITY</div>
+ </main>
+</div>
+
+<div id="transactionModal" class="modal-backdrop hidden">
+ <div class="modal">
+  <div class="modal-head"><h3 id="modalTitle">إضافة معاملة جديدة</h3><button class="close" id="closeModal" type="button">×</button></div>
+  <form id="transactionForm">
+   <input id="editId" type="hidden">
+   <div class="form-grid">
+    <div class="field"><label for="txType">نوع العملية</label><select id="txType" required><option value="expense">مصروف</option><option value="income">دخل</option></select></div>
+    <div class="field"><label for="txAmount">المبلغ بالجنيه</label><input id="txAmount" type="number" min="0.01" max="100000000000" step="0.01" required placeholder="0.00"></div>
+    <div class="field full"><label for="txTitle">وصف العملية</label><input id="txTitle" maxlength="100" required placeholder="مثلاً: مواصلات الجامعة"></div>
+    <div class="field"><label for="txCategory">التصنيف</label><select id="txCategory" required></select></div>
+    <div class="field"><label for="txDate">التاريخ</label><input id="txDate" type="date" required></div>
+    <div class="field full"><label for="txNote">ملاحظات (اختياري)</label><textarea id="txNote" maxlength="500" rows="2" placeholder="أي تفاصيل إضافية..."></textarea></div>
+   </div>
+   <div class="form-actions"><button class="btn btn-gold" type="submit" id="saveTransaction">حفظ العملية</button><button class="btn btn-dark" id="cancelModal" type="button">إلغاء</button></div>
+  </form>
+ </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const KEY="yf_data_v3";
+const AUTH="yf_auth_v3";
+const SESSION="yf_session_v3";
+const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+const CATS={
+ expense:["أكل وشرب","مواصلات","تعليم","فواتير","تسوق","صحة","ترفيه","اشتراكات","سكن","أخرى"],
+ income:["راتب","عمل حر","مصروف شخصي","هدية","استثمار","أخرى"]
+};
+const COLORS=["#e4bd70","#8ab7ff","#42d6a0","#b49aff","#ff9a76","#65d4dc","#ff7385","#9aaecb","#e8db8b","#d89bc3"];
+let data={transactions:[],budgets:{},profile:{name:"بشمهندس يوسف"}};
+let currentPage="dashboard",selectedMonth=new Date().getFullYear()+"-"+String(new Date().getMonth()+1).padStart(2,"0"),toastTimer;
+const money=n=>new Intl.NumberFormat("ar-EG",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0)+" ج.م";
+const monthKey=d=>String(d||"").slice(0,7);
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const sum=(arr,type)=>arr.filter(t=>!type||t.type===type).reduce((a,t)=>a+Number(t.amount||0),0);
+const monthTransactions=m=>data.transactions.filter(t=>monthKey(t.date)===m);
+const net=arr=>sum(arr,"income")-sum(arr,"expense");
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){notify("تعذر الحفظ. قد تكون مساحة المتصفح ممتلئة.");}}
+function load(){
+ try{
+  const d=JSON.parse(localStorage.getItem(KEY)||"null");
+  if(d&&Array.isArray(d.transactions)&&d.budgets&&typeof d.budgets==="object"){
+   data={transactions:d.transactions.filter(validTx),budgets:d.budgets,profile:{name:String(d.profile?.name||"بشمهندس يوسف").slice(0,40)}};
+  }
+ }catch(e){console.error("Load error",e)}
+}
+function validTx(t){return t&&typeof t.id==="string"&&(t.type==="income"||t.type==="expense")&&Number.isFinite(Number(t.amount))&&Number(t.amount)>0&&typeof t.date==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(t.date)}
+function getAuth(){try{return JSON.parse(localStorage.getItem(AUTH)||"null")}catch(e){return null}}
+function setAuth(obj){localStorage.setItem(AUTH,JSON.stringify(obj))}
+function notify(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2600)}
+function monthName(m){const [y,mo]=m.split("-").map(Number);return (MONTHS[mo-1]||"") +" "+y}
+function setPage(page){
+ if(!$("page-"+page))return;
+ currentPage=page;
+ document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+page));
+ document.querySelectorAll(".nav-btn[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+ const titles={dashboard:["الرئيسية","نظرة عامة على وضعك المالي"],transactions:["المعاملات المالية","سجل الدخل والمصروفات"],months:["الشهور والتفاصيل","تفاصيل كل شهر على حدة"],reports:["التقارير والتحليل","تحليل الإنفاق والدخل"],budgets:["الميزانيات","خطة إنفاقك الشهرية"],settings:["الإعدادات والنسخ","إدارة حسابك وبياناتك"]};
+ $("pageTitle").textContent=titles[page][0];$("pageSubtitle").textContent=titles[page][1];
+ closeSidebar();renderAll();
+}
+function openSidebar(){$("sidebar").classList.add("open");$("mobileOverlay").classList.add("show")}
+function closeSidebar(){$("sidebar").classList.remove("open");$("mobileOverlay").classList.remove("show")}
+function monthBudget(m){return Math.max(0,Number(data.budgets[m])||0)}
+function showLogin(){
+ $("loginScreen").classList.remove("hidden");$("app").classList.add("hidden");
+ const exists=!!getAuth();
+ $("nameField").classList.toggle("hidden",exists);
+ $("confirmField").classList.toggle("hidden",exists);
+ $("loginSubmit").textContent=exists?"دخول إلى حسابي ←":"إنشاء الحساب ←";
+ $("loginSubtitle").innerHTML=exists?"أهلاً بعودتك<br>سجّل دخولك لمتابعة أموالك.":"أنشئ كلمة مرور محلية للبدء.<br>لا تستخدم كلمة مرور حساباتك الأخرى.";
+ $("password").value="";$("confirmPassword").value="";
+}
+function enterApp(){
+ $("loginScreen").classList.add("hidden");$("app").classList.remove("hidden");
+ $("welcomeTitle").textContent="أهلاً بيك يا "+data.profile.name+" ✦";
+ $("avatar").textContent=(data.profile.name.trim()[0]||"Y");
+ $("settingsName").value=data.profile.name;
+ $("todayText").textContent=new Intl.DateTimeFormat("ar-EG",{weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(new Date());
+ const now=monthKey(today());
+ selectedMonth=now;
+ $("monthYear").value=Number(now.slice(0,4));
+ $("transactionMonth").value="";
+ $("reportMonth").value=now;
+ renderAll();
+}
+$("loginForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const password=$("password").value,auth=getAuth();
+ if(!auth){
+  const name=$("ownerName").value.trim();
+  if(password.length<6){notify("كلمة المرور يجب أن تكون 6 أحرف على الأقل.");return}
+  if(password!==$("confirmPassword").value){notify("كلمتا المرور غير متطابقتين.");return}
+  if(!name){notify("اكتب اسمك أولاً.");return}
+  setAuth({password,createdAt:new Date().toISOString()});
+  data.profile.name=name;save();sessionStorage.setItem(SESSION,"yes");enterApp();notify("تم إنشاء الحساب المحلي.");
+ }else{
+  if(password!==auth.password){notify("كلمة المرور غير صحيحة.");return}
+  sessionStorage.setItem(SESSION,"yes");enterApp();
+ }
+});
+$("logoutBtn").addEventListener("click",()=>{sessionStorage.removeItem(SESSION);showLogin();notify("تم تسجيل الخروج.")});
+$("menuToggle").addEventListener("click",openSidebar);
+$("mobileOverlay").addEventListener("click",closeSidebar);
+document.querySelectorAll(".nav-btn[data-page]").forEach(b=>b.addEventListener("click",()=>setPage(b.dataset.page)));
+document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>setPage(b.dataset.goto)));
+function populateCategories(type,selected){
+ $("txCategory").innerHTML=CATS[type].map(c=>`<option value="${safe(c)}">${safe(c)}</option>`).join("");
+ if(selected&&CATS[type].includes(selected))$("txCategory").value=selected;
+}
+$("txType").addEventListener("change",()=>populateCategories($("txType").value));
+function openModal(tx){
+ $("transactionForm").reset();
+ $("editId").value=tx?.id||"";
+ $("modalTitle").textContent=tx?"تعديل المعاملة":"إضافة معاملة جديدة";
+ $("saveTransaction").textContent=tx?"حفظ التعديلات":"حفظ العملية";
+ $("txType").value=tx?.type||"expense";
+ populateCategories($("txType").value,tx?.category);
+ $("txAmount").value=tx?.amount??"";
+ $("txTitle").value=tx?.title??"";
+ $("txDate").value=tx?.date??today();
+ $("txNote").value=tx?.note??"";
+ $("transactionModal").classList.remove("hidden");
+ setTimeout(()=>$("txTitle").focus(),50);
+}
+function closeModal(){$("transactionModal").classList.add("hidden")}
+["quickAdd","welcomeAdd","transactionsAdd"].forEach(id=>$(id).addEventListener("click",()=>openModal()));
+$("closeModal").addEventListener("click",closeModal);
+$("cancelModal").addEventListener("click",closeModal);
+$("transactionModal").addEventListener("click",e=>{if(e.target===$("transactionModal"))closeModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();closeSidebar()}});
+$("transactionForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const amount=Number($("txAmount").value),title=$("txTitle").value.trim(),date=$("txDate").value;
+ if(!Number.isFinite(amount)||amount<=0||amount>100000000000){notify("اكتب مبلغًا صحيحًا.");return}
+ if(!title||!date||! /^\d{4}-\d{2}-\d{2}$/.test(date)){notify("راجع الوصف والتاريخ.");return}
+ const id=$("editId").value;
+ const tx={id:id||("tx_"+Date.now()+"_"+Math.random().toString(36).slice(2,8)),type:$("txType").value,amount,title,category:$("txCategory").value,date,note:$("txNote").value.trim()};
+ if(id){const i=data.transactions.findIndex(t=>t.id===id);if(i<0){notify("المعاملة غير موجودة.");return}data.transactions[i]=tx}
+ else data.transactions.push(tx);
+ data.transactions.sort((a,b)=>b.date.localeCompare(a.date));
+ save();closeModal();renderAll();notify(id?"تم تعديل المعاملة بنجاح.":"تمت إضافة المعاملة بنجاح.");
+});
+function actionButtons(t){
+ return `<div class="actions"><button class="text-btn" data-edit="${safe(t.id)}">تعديل</button><button class="text-btn" data-delete="${safe(t.id)}">حذف</button></div>`;
+}
+function txRows(arr,withActions=true){
+ if(!arr.length)return `<tr><td colspan="${withActions?6:5}"><div class="empty"><div class="empty-icon">◇</div>لا توجد معاملات مسجلة هنا بعد.</div></td></tr>`;
+ return arr.map(t=>`<tr>
+ <td><div class="row-title">${safe(t.title)}</div>${t.note?`<div class="row-sub">${safe(t.note)}</div>`:""}</td>
+ <td>${safe(t.category)}</td><td>${safe(t.date)}</td>
+ <td class="${t.type==="income"?"green":"red"}" style="font-weight:800">${t.type==="income"?"+":"−"}${money(t.amount)}</td>
+ <td><span class="type-badge ${t.type==="income"?"type-income":"type-expense"}">${t.type==="income"?"دخل":"مصروف"}</span></td>
+ ${withActions?`<td>${actionButtons(t)}</td>`:""}
+ </tr>`).join("");
+}
+function bindTxActions(root){
+ root.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>{const t=data.transactions.find(t=>t.id===b.dataset.edit);if(t)openModal(t)}));
+ root.querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>{
+  const t=data.transactions.find(t=>t.id===b.dataset.delete);if(!t)return;
+  if(!confirm(`حذف المعاملة «${t.title}» بقيمة ${money(t.amount)}؟`))return;
+  data.transactions=data.transactions.filter(x=>x.id!==t.id);save();renderAll();notify("تم حذف المعاملة.");
+ }));
+}
+function renderDashboard(){
+ const m=monthKey(today()),arr=monthTransactions(m),income=sum(arr,"income"),expense=sum(arr,"expense"),budget=monthBudget(m);
+ $("totalBalance").textContent=money(net(data.transactions));
+ $("monthIncome").textContent=money(income);$("monthExpense").textContent=money(expense);
+ $("incomeFoot").textContent="خلال "+monthName(m);$("expenseFoot").textContent="خلال "+monthName(m);
+ $("budgetRemaining").textContent=budget?money(budget-expense):"—";
+ $("budgetFoot").textContent=budget?`استخدمت ${Math.round(expense/budget*100)}% من الميزانية`:"حدد ميزانية للشهر";
+ const recent=[...data.transactions].sort((a,b)=>(b.date+b.id).localeCompare(a.date+a.id)).slice(0,6);
+ $("recentBody").innerHTML=txRows(recent,false);bindTxActions($("recentBody"));
+ const months=Array.from({length:6},(_,i)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-5+i);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")});
+ const vals=months.map(m=>sum(monthTransactions(m),"expense")),max=Math.max(...vals,1);
+ $("expenseChart").innerHTML=months.map((m,i)=>`<div class="chart-col"><div class="chart-value">${vals[i]?new Intl.NumberFormat("ar-EG",{notation:"compact",maximumFractionDigits:1}).format(vals[i]):"—"}</div><div class="bar-track"><div class="bar" style="height:${vals[i]?Math.max(5,vals[i]/max*100):0}%"></div></div><div class="chart-label">${MONTHS[Number(m.slice(5))-1]}</div></div>`).join("");
+ renderDonut(arr);
+}
+function renderDonut(arr){
+ const exp=arr.filter(t=>t.type==="expense"),total=sum(exp);
+ const groups={};exp.forEach(t=>groups[t.category]=(groups[t.category]||0)+t.amount);
+ const entries=Object.entries(groups).sort((a,b)=>b[1]-a[1]);
+ let angle=0;
+ const parts=entries.map(([name,value],i)=>{const start=angle;angle+=total?value/total*360:0;return `${COLORS[i%COLORS.length]} ${start}deg ${angle}deg`});
+ $("expenseDonut").style.background=total?`conic-gradient(${parts.join(",")})`:"conic-gradient(#26334b 0deg 360deg)";
+ $("donutTotal").textContent=new Intl.NumberFormat("ar-EG",{notation:"compact",maximumFractionDigits:1}).format(total);
+ $("expenseLegend").innerHTML=entries.length?entries.slice(0,6).map(([name,value],i)=>`<div class="legend-row"><span class="dot" style="background:${COLORS[i%COLORS.length]}"></span><span>${safe(name)}</span><span class="amount">${Math.round(value/total*100)}%</span></div>`).join(""):`<div class="empty">لا توجد مصروفات هذا الشهر.</div>`;
+}
+function renderTransactions(){
+ const search=$("transactionSearch").value.trim().toLowerCase(),type=$("typeFilter").value,m=$("transactionMonth").value;
+ const arr=[...data.transactions].sort((a,b)=>b.date.localeCompare(a.date)).filter(t=>(type==="all"||t.type===type)&&(!m||monthKey(t.date)===m)&&(!search||(t.title+" "+t.category+" "+(t.note||"")).toLowerCase().includes(search)));
+ $("transactionsBody").innerHTML=txRows(arr,true);bindTxActions($("transactionsBody"));
+ $("transactionCount").textContent=`عدد النتائج: ${arr.length} · الدخل: ${money(sum(arr,"income"))} · المصروفات: ${money(sum(arr,"expense"))}`;
+}
+["transactionSearch","typeFilter","transactionMonth"].forEach(id=>$(id).addEventListener(id==="transactionSearch"?"input":"change",renderTransactions));
+function renderMonths(){
+ const year=Math.max(2000,Math.min(2100,Number($("monthYear").value)||new Date().getFullYear()));
+ const cards=[];
+ for(let i=12;i>=1;i--){
+  const m=year+"-"+String(i).padStart(2,"0"),arr=monthTransactions(m),inc=sum(arr,"income"),exp=sum(arr,"expense"),budget=monthBudget(m);
+  cards.push(`<button class="month-card ${m===selectedMonth?"selected":""}" data-month="${m}"><div class="month-name">${MONTHS[i-1]}</div><div class="month-year">${year}</div><div class="month-total ${exp?"red":""}">${money(exp)}</div><div class="month-mini"><span>دخل ${money(inc)}</span><span>${arr.length} عملية</span></div><div class="progress"><span style="width:${budget?Math.min(100,exp/budget*100):0}%"></span></div></button>`);
+ }
+ $("monthGrid").innerHTML=cards.join("");
+ $("monthGrid").querySelectorAll("[data-month]").forEach(b=>b.addEventListener("click",()=>{selectedMonth=b.dataset.month;renderMonths()}));
+ const arr=monthTransactions(selectedMonth);
+ $("selectedMonthTitle").textContent="تفاصيل "+monthName(selectedMonth);
+ $("detailIncome").textContent=money(sum(arr,"income"));$("detailExpense").textContent=money(sum(arr,"expense"));
+ $("detailNet").textContent=money(net(arr));$("detailCount").textContent=arr.length.toLocaleString("ar-EG");
+ $("monthBody").innerHTML=txRows(arr,true);bindTxActions($("monthBody"));
+}
+$("monthYear").addEventListener("change",()=>{const y=Number($("monthYear").value);if(y>=2000&&y<=2100){selectedMonth=y+"-"+selectedMonth.slice(5);renderMonths()}});
+$("monthExport").addEventListener("click",()=>exportCSV(monthTransactions(selectedMonth),"transactions-"+selectedMonth+".csv"));
+function renderReports(){
+ const m=$("reportMonth").value||monthKey(today()),arr=monthTransactions(m),inc=sum(arr,"income"),exp=sum(arr,"expense");
+ $("reportIncome").textContent=money(inc);$("reportExpense").textContent=money(exp);$("reportNet").textContent=money(inc-exp);$("reportCount").textContent=arr.length.toLocaleString("ar-EG");
+ const groups={};arr.filter(t=>t.type==="expense").forEach(t=>groups[t.category]=(groups[t.category]||0)+t.amount);
+ const entries=Object.entries(groups).sort((a,b)=>b[1]-a[1]);
+ $("reportCategories").innerHTML=entries.length?entries.map(([name,v],i)=>`<div style="margin:15px 0"><div class="budget-meta"><span>${safe(name)}</span><span>${money(v)}</span></div><div class="progress"><span style="width:${exp?Math.min(100,v/exp*100):0}%;background:${COLORS[i%COLORS.length]}"></span></div></div>`).join(""):`<div class="empty">لا توجد مصروفات في الفترة المحددة.</div>`;
+ $("reportSummary").innerHTML=`<div style="margin-bottom:23px"><div class="budget-meta"><span>الدخل</span><b class="green">${money(inc)}</b></div><div class="progress"><span style="width:${inc+exp?inc/(inc+exp)*100:0}%;background:var(--green)"></span></div></div><div style="margin-bottom:23px"><div class="budget-meta"><span>المصروفات</span><b class="red">${money(exp)}</b></div><div class="progress"><span style="width:${inc+exp?exp/(inc+exp)*100:0}%;background:var(--red)"></span></div></div><div class="notice">صافي الفترة: <b class="${inc-exp>=0?"green":"red"}">${money(inc-exp)}</b><br>نسبة الإنفاق من الدخل: <b>${inc>0?Math.round(exp/inc*100)+"%":"لا يوجد دخل مسجل"}</b></div>`;
+}
+$("reportMonth").addEventListener("change",renderReports);
+function renderBudgets(){
+ const m=monthKey(today()),budget=monthBudget(m),spent=sum(monthTransactions(m),"expense"),remaining=budget-spent,pct=budget?Math.round(spent/budget*100):0;
+ $("budgetMonthLabel").textContent=monthName(m);
+ $("budgetBig").textContent=budget?money(budget):"لم تحدد ميزانية";
+ $("budgetSpent").textContent="المنفق: "+money(spent);$("budgetPercent").textContent=budget?pct+"%":"0%";
+ $("budgetProgress").style.width=budget?Math.min(100,pct)+"%":"0%";
+ $("budgetMessage").textContent=!budget?"حدد ميزانية عشان تبدأ تتابع إنفاقك.":remaining<0?"تنبيه: تجاوزت الميزانية بمقدار "+money(Math.abs(remaining))+".":remaining===0?"وصلت إلى حد الميزانية.":"متبقي لك "+money(remaining)+" من ميزانية الشهر.";
+ const keys=Object.keys(data.budgets).filter(k=>Number(data.budgets[k])>0).sort((a,b)=>b.localeCompare(a));
+ $("budgetHistory").innerHTML=keys.length?keys.map(k=>{const b=monthBudget(k),s=sum(monthTransactions(k),"expense"),p=Math.round(s/b*100);return `<div class="budget-card"><div class="card-title">${monthName(k)}</div><div class="budget-number gold">${money(b)}</div><div class="budget-meta"><span>المنفق ${money(s)}</span><span>${p}%</span></div><div class="progress"><span style="width:${Math.min(100,p)}%"></span></div><button class="btn btn-dark btn-small" data-budget-month="${k}" style="margin-top:14px">تعديل</button></div>`}).join(""):`<div class="empty" style="grid-column:1/-1">لم تسجل أي ميزانيات بعد.</div>`;
+ $("budgetHistory").querySelectorAll("[data-budget-month]").forEach(b=>b.addEventListener("click",()=>setBudgetFor(b.dataset.budgetMonth)));
+}
+function setBudgetFor(m){
+ const old=monthBudget(m),val=prompt("حدد الميزانية بالجنيه لشهر "+monthName(m),old||"");
+ if(val===null)return;
+ const n=Number(val);
+ if(!Number.isFinite(n)||n<0||n>100000000000){notify("اكتب مبلغًا صحيحًا.");return}
+ if(n===0)delete data.budgets[m];else data.budgets[m]=n;
+ save();renderAll();notify("تم حفظ الميزانية.");
+}
+$("setBudget").addEventListener("click",()=>setBudgetFor(monthKey(today())));
+$("editBudget").addEventListener("click",()=>setBudgetFor(monthKey(today())));
+function renderAll(){renderDashboard();renderTransactions();renderMonths();renderReports();renderBudgets()}
+$("profileForm").addEventListener("submit",e=>{e.preventDefault();const name=$("settingsName").value.trim();if(!name){notify("اكتب اسمًا صحيحًا.");return}data.profile.name=name;save();$("welcomeTitle").textContent="أهلاً بيك يا "+name+" ✦";$("avatar").textContent=name[0]||"Y";notify("تم حفظ الاسم.");});
+$("passwordForm").addEventListener("submit",e=>{
+ e.preventDefault();const auth=getAuth(),old=$("oldPassword").value,n=$("newPassword").value;
+ if(!auth||old!==auth.password){notify("كلمة المرور الحالية غير صحيحة.");return}
+ if(n.length<6){notify("كلمة المرور الجديدة قصيرة.");return}
+ setAuth({...auth,password:n});$("passwordForm").reset();notify("تم تغيير كلمة المرور المحلية.");
+});
+function download(content,name,type){
+ const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function exportCSV(arr,name){
+ const rows=[["الوصف","النوع","التصنيف","التاريخ","المبلغ","ملاحظات"],...arr.map(t=>[t.title,t.type==="income"?"دخل":"مصروف",t.category,t.date,t.amount,t.note||""])];
+ const csv="\uFEFF"+rows.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ download(csv,name,"text/csv;charset=utf-8");notify("تم تجهيز ملف CSV.");
+}
+$("exportAllCSV").addEventListener("click",()=>exportCSV(data.transactions,"youssef-finance-transactions.csv"));
+$("monthExport").addEventListener("click",()=>exportCSV(monthTransactions(selectedMonth),"transactions-"+selectedMonth+".csv"));
+$("exportJSON").addEventListener("click",()=>download(JSON.stringify({format:"YoussefFinanceBackup",version:3,exportedAt:new Date().toISOString(),data},null,2),"youssef-finance-backup.json","application/json"));
+$("importFile").addEventListener("change",async e=>{
+ const file=e.target.files[0];if(!file)return;
+ try{
+  const parsed=JSON.parse(await file.text()),incoming=parsed.data||parsed;
+  if(!incoming||!Array.isArray(incoming.transactions)||!incoming.budgets||typeof incoming.budgets!=="object")throw Error("invalid");
+  const tx=incoming.transactions.filter(validTx);
+  if(!confirm(`سيتم استبدال بياناتك الحالية بـ ${tx.length} معاملة. هل تريد المتابعة؟`))return;
+  data={transactions:tx,budgets:incoming.budgets,profile:{name:String(incoming.profile?.name||"بشمهندس يوسف").slice(0,40)}};
+  save();enterApp();notify("تم استيراد النسخة الاحتياطية.");
+ }catch(err){notify("ملف غير صالح أو ليس نسخة احتياطية مناسبة.")}
+ finally{e.target.value=""}
+});
+$("clearTransactions").addEventListener("click",()=>{
+ if(!confirm("هل أنت متأكد من حذف جميع المعاملات والميزانيات؟"))return;
+ if(!confirm("تأكيد أخير: لا يمكن التراجع عن الحذف."))return;
+ data.transactions=[];data.budgets={};save();renderAll();notify("تم حذف المعاملات والميزانيات.");
+});
+load();
+if(getAuth()&&sessionStorage.getItem(SESSION)==="yes")enterApp();else showLogin();
+})();
+</script>
+</body>
+</html>
