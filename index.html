@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08090d">
+<title>REBIRTH | رحلة التغيير</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap');
+
+:root{
+ --bg:#08090d;--surface:#10131b;--surface2:#161a24;
+ --gold:#d6b16c;--gold2:#f3d99d;--text:#f4f1e9;
+ --muted:#8e929f;--line:#262b36;--green:#68c99a;
+ --red:#e48b8b;--blue:#8eafff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Cairo,sans-serif}
+button,input,textarea{font:inherit}
+button{cursor:pointer;transition:.2s}
+button:hover{filter:brightness(1.12);transform:translateY(-1px)}
+#login{
+ min-height:100vh;display:grid;place-items:center;padding:20px;
+ background:radial-gradient(ellipse at 50% 30%,#302514 0%,#11121a 45%,#08090d 80%);
+}
+.login-card{
+ width:min(420px,100%);padding:35px 28px;text-align:center;
+ background:#11141dee;border:1px solid #8d70414d;border-radius:25px;
+ box-shadow:0 30px 100px #0009;
+}
+.logo{font-size:39px;font-weight:900;letter-spacing:5px;color:var(--gold2)}
+.logo-sub{font-size:10px;letter-spacing:4px;color:var(--muted)}
+.login-symbol{font-size:40px;margin:30px 0 10px;color:var(--gold)}
+.login-card h2{font-size:22px}
+.login-card p{font-size:13px;color:var(--muted);line-height:2}
+#pin{width:100%;background:#090b10;border:1px solid var(--line);padding:15px;border-radius:13px;text-align:center;color:white;letter-spacing:12px;font-size:22px;outline:none;margin:15px 0}
+#loginError{color:var(--red);font-size:12px;min-height:20px}
+.primary{
+ background:linear-gradient(120deg,var(--gold2),#b78b47);color:#17130b;
+ border:0;padding:12px 19px;border-radius:11px;font-weight:900;
+}
+.wide{width:100%}
+#app{display:none;max-width:1450px;margin:auto;min-height:100vh}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:100vh}
+.sidebar{
+ background:#0d1016;border-left:1px solid var(--line);padding:25px 17px;
+ display:flex;flex-direction:column;gap:25px;
+}
+.side-brand{font-size:27px;font-weight:900;letter-spacing:3px;color:var(--gold2);padding:5px 10px}
+.side-brand small{display:block;font-size:9px;color:var(--muted);letter-spacing:2px}
+.nav-title{font-size:10px;color:#626979;padding:0 12px;margin-bottom:5px}
+.nav{display:flex;flex-direction:column;gap:6px}
+.nav button{
+ text-align:right;background:transparent;color:#aeb2be;border:1px solid transparent;
+ border-radius:10px;padding:11px 13px;font-size:13px;
+}
+.nav button.active{background:#282114;color:var(--gold2);border-color:#6d5633}
+.side-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:15px}
+.main{padding:25px;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:20px}
+.topbar h2{font-size:19px;margin:0}
+.topbar p{font-size:11px;color:var(--muted);margin:5px 0 0}
+.top-actions{display:flex;gap:8px}
+.ghost{background:var(--surface2);border:1px solid var(--line);color:#ddd;padding:9px 12px;border-radius:10px;font-size:11px}
+.mobile-nav{display:none}
+.page{display:none;padding-top:23px}
+.page.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hero{
+ padding:30px;border-radius:20px;border:1px solid #8e713b55;
+ background:linear-gradient(115deg,#282013,#171821 70%);
+ position:relative;overflow:hidden;margin-bottom:17px;
+}
+.hero:after{content:"✦";position:absolute;left:30px;top:-35px;font-size:150px;color:#d6b16c0c}
+.eyebrow{font-size:11px;color:var(--gold);font-weight:800}
+.hero h1{font-size:clamp(23px,4vw,34px);margin:9px 0}
+.hero p{max-width:750px;font-size:13px;color:#c3c0b9;line-height:2.2;margin:0}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.card,.stat{
+ background:var(--surface);border:1px solid var(--line);
+ border-radius:16px;padding:18px;min-width:0;
+}
+.stat-label{font-size:11px;color:var(--muted)}
+.stat-value{font-size:29px;font-weight:900;color:var(--gold2);margin:8px 0 2px}
+.stat-foot{font-size:10px;color:#737989}
+.card h3{font-size:15px;margin:0 0 12px}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:24px 0 12px}
+.section-head h3{font-size:16px;margin:0}
+.section-head span{font-size:10px;color:var(--muted)}
+.progress{height:8px;background:#282d38;border-radius:20px;overflow:hidden;margin:13px 0}
+.progress div{height:100%;background:linear-gradient(90deg,#a47b3d,var(--gold2));border-radius:20px;transition:.3s}
+.muted{font-size:11px;color:var(--muted);line-height:2}
+.quote{background:#1c1a15;border-right:3px solid var(--gold);padding:15px;border-radius:9px;line-height:2.1;font-size:13px;color:#ead8b4}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
+.actions button{flex:1;min-width:125px}
+.green{background:#16392d;color:#91e3b9;border:1px solid #286348;border-radius:10px;padding:11px;font-weight:800}
+.red{background:#3b2225;color:#f0a9a9;border:1px solid #63383c;border-radius:10px;padding:11px;font-weight:800}
+.dark{background:#222733;color:#e7e8eb;border:1px solid #363d4b;border-radius:10px;padding:11px;font-weight:700}
+.habit-list{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.habit{
+ display:flex;align-items:center;gap:10px;padding:12px;background:var(--surface2);
+ border:1px solid var(--line);border-radius:11px;font-size:12px;
+}
+.habit input{accent-color:var(--gold);width:17px;height:17px}
+input[type=text],input[type=number],textarea,select{
+ width:100%;background:#090b10;border:1px solid var(--line);
+ color:white;padding:12px;border-radius:10px;outline:none;font-size:12px;
+}
+textarea{min-height:110px;resize:vertical;line-height:2}
+input:focus,textarea:focus,select:focus{border-color:#987844}
+.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.day{background:var(--surface2);padding:10px 3px;text-align:center;border-radius:8px;font-size:11px}
+.day.good{background:#17402f;color:#91e3b9}
+.day.hard{background:#402427;color:#f0aaaa}
+.day.today{outline:1px solid var(--gold)}
+.day-name{font-size:10px;color:var(--muted);text-align:center;padding:7px 0}
+.level-badge{color:var(--gold2);font-size:12px;font-weight:900}
+.achievement{border:1px solid var(--line);background:var(--surface2);padding:15px;border-radius:12px}
+.achievement strong{display:block;font-size:13px;margin-bottom:6px}
+.achievement span{font-size:10px;color:var(--muted)}
+.achievement.unlocked{border-color:#92703e;background:#282114}
+.note-item{padding:12px;border-bottom:1px solid var(--line);font-size:12px;line-height:2}
+.note-item:last-child{border:0}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:450px}
+td,th{padding:12px;text-align:right;border-bottom:1px solid var(--line)}
+th{color:var(--gold2)}
+.badge{padding:4px 8px;border-radius:20px;font-size:10px}
+.badge.good{background:#17402f;color:#91e3b9}
+.badge.hard{background:#402427;color:#f0aaaa}
+footer{text-align:center;color:#555d69;font-size:10px;padding:30px}
+@media(max-width:850px){
+ .layout{grid-template-columns:1fr}
+ .sidebar{display:none}
+ .mobile-nav{display:flex;position:sticky;bottom:0;z-index:20;background:#10131bf5;border-top:1px solid var(--line);padding:7px;gap:4px;justify-content:space-around}
+ .mobile-nav button{background:transparent;border:0;color:#aaa;padding:8px 5px;font-size:10px}
+ .mobile-nav button.active{color:var(--gold2)}
+ .main{padding:15px}
+}
+@media(max-width:620px){
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .grid2{grid-template-columns:1fr}
+ .hero{padding:22px}
+ .topbar h2{font-size:16px}
+ .top-actions .ghost{padding:8px;font-size:10px}
+ .habit-list{grid-template-columns:1fr}
+ .stat{padding:13px}
+ .stat-value{font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<div id="login">
+ <div class="login-card">
+  <div class="logo">REBIRTH</div>
+  <div class="logo-sub">PERSONAL GROWTH SYSTEM</div>
+  <div class="login-symbol">✦</div>
+  <h2>مساحتك الجديدة تبدأ هنا</h2>
+  <p>كل عودة بداية جديدة.<br>أدخل رمزك السري لمتابعة رحلتك.</p>
+  <input id="pin" type="password" inputmode="numeric" maxlength="6" placeholder="••••••">
+  <button class="primary wide" onclick="login()">دخول إلى مساحتي</button>
+  <div id="loginError"></div>
+  <p style="font-size:10px">REBIRTH — YOUR NEW BEGINNING</p>
+ </div>
+</div>
+
+<div id="app">
+ <div class="layout">
+  <aside class="sidebar">
+   <div class="side-brand">REBIRTH<small>PERSONAL GROWTH SYSTEM</small></div>
+   <div>
+    <div class="nav-title">القائمة الرئيسية</div>
+    <div class="nav">
+     <button class="active" data-page="home" onclick="showPage('home',this)">◈ نظرة عامة</button>
+     <button data-page="journey" onclick="showPage('journey',this)">✦ رحلتي اليومية</button>
+     <button data-page="habits" onclick="showPage('habits',this)">✓ العادات الإيجابية</button>
+     <button data-page="calendar" onclick="showPage('calendar',this)">▦ التقويم</button>
+     <button data-page="levels" onclick="showPage('levels',this)">♛ المستويات والإنجازات</button>
+     <button data-page="journal" onclick="showPage('journal',this)">▤ مذكراتي</button>
+     <button data-page="reports" onclick="showPage('reports',this)">▥ التقارير</button>
+    </div>
+   </div>
+   <div class="side-bottom">
+    <div class="nav-title">إدارة المساحة</div>
+    <div class="nav">
+     <button onclick="backup()">⇩ نسخة احتياطية</button>
+     <button onclick="lockApp()">⌑ قفل المساحة</button>
+    </div>
+   </div>
+  </aside>
+
+  <main class="main">
+   <div class="topbar">
+    <div>
+     <h2 id="pageTitle">نظرة عامة</h2>
+     <p id="dateLabel"></p>
+    </div>
+    <div class="top-actions">
+     <button class="ghost" onclick="newMessage()">✦ رسالة تحفيزية</button>
+     <button class="ghost" onclick="lockApp()">قفل</button>
+    </div>
+   </div>
+
+   <!-- HOME -->
+   <section class="page active" id="home">
+    <div class="hero">
+     <div class="eyebrow">✦ WELCOME TO YOUR NEW CHAPTER</div>
+     <h1>هتوب إلى الله، حتى لو أذنبت 100 مرة.</h1>
+     <p>مش معنى إنك وقعت إنك انتهيت. ومش معنى إنك تعثرت إنك مش قادر تتغير. ارجع لربنا، وخد بالأسباب، وابدأ من جديد. رحلتك مش سباق، ومفيش داعي تقارن نفسك بحد.</p>
+    </div>
+    <div class="grid">
+     <div class="stat"><div class="stat-label">المستوى الحالي</div><div class="stat-value" id="sLevel">1</div><div class="stat-foot" id="sLevelName">البداية</div></div>
+     <div class="stat"><div class="stat-label">مجموع نقاط XP</div><div class="stat-value" id="sPoints">0</div><div class="stat-foot">نقاط رحلتك</div></div>
+     <div class="stat"><div class="stat-label">أيام الالتزام المتتالية</div><div class="stat-value" id="sStreak">0</div><div class="stat-foot">يوم متواصل</div></div>
+     <div class="stat"><div class="stat-label">إجمالي الأيام المسجلة</div><div class="stat-value" id="sTotal">0</div><div class="stat-foot">يوم في سجلك</div></div>
+    </div>
+    <div class="section-head"><h3>رحلتك اليوم</h3><span id="homeDate"></span></div>
+    <div class="card">
+     <h3>كيف كان يومك؟</h3>
+     <p class="muted">سجل يومك بصدق. لا توجد أحكام عليك هنا، فقط متابعة وتعلم وتقدم.</p>
+     <div class="actions">
+      <button class="green" onclick="recordDay('good')">✓ حققت هدفي اليوم</button>
+      <button class="red" onclick="recordDay('hard')">يوم صعب — أبدأ من جديد</button>
+     </div>
+     <p class="muted" id="homeStatus"></p>
+    </div>
+    <div class="grid2">
+     <div class="card">
+      <h3>تقدم عاداتك</h3>
+      <div class="stat-value" id="homeHabitCount">0/6</div>
+      <div class="progress"><div id="homeHabitBar" style="width:0%"></div></div>
+      <p class="muted">خطواتك الصغيرة تصنع فرقًا كبيرًا.</p>
+      <button class="dark" onclick="showPage('habits')">عرض العادات</button>
+     </div>
+     <div class="card">
+      <h3>رسالة اليوم</h3>
+      <div class="quote" id="homeMessage">لا تجعل تعثرك اليوم يسرق منك أمل الغد. ارجع وحاول من جديد.</div>
+      <button class="dark" style="margin-top:12px" onclick="newMessage()">رسالة أخرى</button>
+     </div>
+    </div>
+    <div class="section-head"><h3>تذكير قرآني</h3><span>رسالة أمل</span></div>
+    <div class="card">
+     <div class="quote">﴿قُلْ يَا عِبَادِيَ الَّذِينَ أَسْرَفُوا عَلَىٰ أَنْفُسِهِمْ لَا تَقْنَطُوا مِنْ رَحْمَةِ اللَّهِ إِنَّ اللَّهَ يَغْفِرُ الذُّنُوبَ جَمِيعًا﴾</div>
+     <p class="muted">سورة الزمر — الآية 53</p>
+    </div>
+   </section>
+
+   <!-- JOURNEY -->
+   <section class="page" id="journey">
+    <div class="hero">
+     <div class="eyebrow">DAILY TRACKER</div>
+     <h1>خطوة جديدة كل يوم.</h1>
+     <p>استخدم هذه الصفحة لتسجيل يومك، وملاحظة ما يساعدك على التقدم، دون جلد للذات.</p>
+    </div>
+    <div class="card">
+     <h3>تسجيل اليوم</h3>
+     <p class="muted">اختر الحالة المناسبة لهذا اليوم. يمكنك تعديل تسجيلك إذا احتجت.</p>
+     <div class="actions">
+      <button class="green" onclick="recordDay('good')">حققت هدفي</button>
+      <button class="red" onclick="recordDay('hard')">يوم صعب</button>
+     </div>
+     <p class="muted" id="journeyStatus"></p>
+    </div>
+    <div class="card">
+     <h3>ماذا أفعل بعد يوم صعب؟</h3>
+     <div class="quote">1. لا تستسلم لفكرة أن كل شيء ضاع.<br>2. افهم الظروف التي جعلت اليوم أصعب.<br>3. ابتعد قليلًا عن المشتتات.<br>4. ارجع لروتينك الطبيعي.<br>5. ابدأ بخطوة صغيرة الآن.</div>
+    </div>
+    <div class="card">
+     <h3>رسالة تذكير</h3>
+     <div id="journeyMessage" class="quote">باب التوبة مفتوح، واليأس مش حل. خليك مستمر في المحاولة.</div>
+     <button class="dark" style="margin-top:12px" onclick="newMessage()">تغيير الرسالة</button>
+    </div>
+   </section>
+
+   <!-- HABITS -->
+   <section class="page" id="habits">
+    <div class="hero">
+     <div class="eyebrow">POSITIVE HABITS</div>
+     <h1>ابنِ يومك بعادات صغيرة.</h1>
+     <p>لا تحتاج إلى تغيير كل شيء مرة واحدة. اختر ما تستطيع فعله اليوم.</p>
+    </div>
+    <div class="card">
+     <h3>عادات اليوم</h3>
+     <div class="habit-list" id="habitList">
+      <label class="habit"><input type="checkbox" data-habit="prayer"> المحافظة على الصلاة</label>
+      <label class="habit"><input type="checkbox" data-habit="study"> الدراسة والتعلم</label>
+      <label class="habit"><input type="checkbox" data-habit="movement"> حركة أو نشاط بدني</label>
+      <label class="habit"><input type="checkbox" data-habit="sleep"> نوم وراحة كافية</label>
+      <label class="habit"><input type="checkbox" data-habit="reading"> قراءة أو ذكر</label>
+      <label class="habit"><input type="checkbox" data-habit="phone"> تقليل وقت الهاتف</label>
+     </div>
+     <div class="progress"><div id="habitBar" style="width:0%"></div></div>
+     <p class="muted" id="habitSummary">0 من 6 عادات.</p>
+    </div>
+    <div class="grid2">
+     <div class="card"><h3>هدف صغير اليوم</h3><p class="muted">اختار مهمة واحدة مهمة وأنجزها.</p><input type="text" id="smallGoal" placeholder="مثال: مذاكرة ساعة"><button class="primary" style="margin-top:10px" onclick="saveGoal()">حفظ الهدف</button><p class="muted" id="goalStatus"></p></div>
+     <div class="card"><h3>تذكير</h3><div class="quote">الاستمرارية أهم من الكمال. ابدأ بما تستطيع.</div></div>
+    </div>
+   </section>
+
+   <!-- CALENDAR -->
+   <section class="page" id="calendar">
+    <div class="hero"><div class="eyebrow">YOUR HISTORY</div><h1>كل يوم له مكان في رحلتك.</h1><p>راجع أيامك السابقة دون أحكام. التقويم أداة لفهم التقدم وليس لمعاقبة نفسك.</p></div>
+    <div class="card">
+     <div class="section-head" style="margin-top:0">
+      <button class="dark" onclick="changeMonth(-1)">الشهر السابق</button>
+      <h3 id="monthTitle"></h3>
+      <button class="dark" onclick="changeMonth(1)">الشهر التالي</button>
+     </div>
+     <div class="calendar" id="calendarGrid"></div>
+     <p class="muted">الأخضر: حققت هدفك — الأحمر: يوم صعب — الفارغ: لم يتم تسجيله.</p>
+    </div>
+   </section>
+
+   <!-- LEVELS -->
+   <section class="page" id="levels">
+    <div class="hero"><div class="eyebrow">LEVEL UP</div><h1>كل خطوة تستحق التقدير.</h1><p>النقاط وسيلة لتشجيعك، وليست مقياسًا لقيمتك أو علاقتك بربنا.</p></div>
+    <div class="grid">
+     <div class="stat"><div class="stat-label">مستواك</div><div class="stat-value" id="levelNumber">1</div></div>
+     <div class="stat"><div class="stat-label">إجمالي XP</div><div class="stat-value" id="levelPoints">0</div></div>
+     <div class="stat"><div class="stat-label">إنجازات مفتوحة</div><div class="stat-value" id="achievementCount">0</div></div>
+     <div class="stat"><div class="stat-label">أيام مسجلة</div><div class="stat-value" id="levelDays">0</div></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+     <h3 id="levelHeading">المستوى الأول — البداية</h3>
+     <div class="progress"><div id="levelProgress" style="width:0%"></div></div>
+     <p class="muted" id="levelCaption">0 / 100 XP للمستوى التالي.</p>
+    </div>
+    <div class="section-head"><h3>الإنجازات</h3><span>افتحها بالتقدم</span></div>
+    <div class="grid3" id="achievements"></div>
+   </section>
+
+   <!-- JOURNAL -->
+   <section class="page" id="journal">
+    <div class="hero"><div class="eyebrow">PRIVATE JOURNAL</div><h1>مساحة تكتب فيها لنفسك.</h1><p>اكتب ما تعلمته اليوم، وما تريد تحسينه غدًا. لا تحتاج إلى كتابة مثالية.</p></div>
+    <div class="card">
+     <h3>مذكرة جديدة</h3>
+     <textarea id="journalText" placeholder="اكتب أفكارك هنا..."></textarea>
+     <button class="primary" style="margin-top:12px" onclick="saveJournal()">حفظ المذكرة</button>
+     <p class="muted" id="journalStatus"></p>
+    </div>
+    <div class="section-head"><h3>مذكراتي السابقة</h3><span id="journalCount">0 مذكرة</span></div>
+    <div class="card" id="journalList"><p class="muted">لا توجد مذكرات حتى الآن.</p></div>
+   </section>
+
+   <!-- REPORTS -->
+   <section class="page" id="reports">
+    <div class="hero"><div class="eyebrow">PROGRESS REPORT</div><h1>شاهد تقدمك بوضوح.</h1><p>الأرقام تساعدك على ملاحظة العادات والأنماط، لكنها لا تختصر رحلتك بالكامل.</p></div>
+    <div class="grid">
+     <div class="stat"><div class="stat-label">أيام حققت فيها هدفك</div><div class="stat-value" id="reportGood">0</div></div>
+     <div class="stat"><div class="stat-label">أيام صعبة</div><div class="stat-value" id="reportHard">0</div></div>
+     <div class="stat"><div class="stat-label">نسبة أيام الالتزام</div><div class="stat-value" id="reportRate">0%</div></div>
+     <div class="stat"><div class="stat-label">مجموع النقاط</div><div class="stat-value" id="reportXP">0</div></div>
+    </div>
+    <div class="section-head"><h3>آخر تسجيلاتك</h3><span>الأحدث أولًا</span></div>
+    <div class="card table-wrap">
+     <table><thead><tr><th>التاريخ</th><th>الحالة</th><th>العادات المنجزة</th></tr></thead><tbody id="reportTable"></tbody></table>
+    </div>
+    <div class="card">
+     <h3>نسخ بياناتك</h3>
+     <p class="muted">يمكنك تنزيل نسخة احتياطية من بياناتك أو استعادتها لاحقًا.</p>
+     <div class="actions"><button class="primary" onclick="backup()">تنزيل نسخة احتياطية</button><button class="dark" onclick="document.getElementById('restoreFile').click()">استعادة نسخة</button><input type="file" id="restoreFile" accept=".json" hidden onchange="restore(event)"></div>
+    </div>
+   </section>
+
+   <footer>REBIRTH © 2026 — رحلة التغيير تبدأ بخطوة.</footer>
+  </main>
+ </div>
+ <nav class="mobile-nav">
+  <button class="active" data-page="home" onclick="showPage('home',this)">◈<br>الرئيسية</button>
+  <button data-page="journey" onclick="showPage('journey',this)">✦<br>رحلتي</button>
+  <button data-page="habits" onclick="showPage('habits',this)">✓<br>العادات</button>
+  <button data-page="calendar" onclick="showPage('calendar',this)">▦<br>التقويم</button>
+  <button data-page="levels" onclick="showPage('levels',this)">♛<br>المستويات</button>
+  <button data-page="journal" onclick="showPage('journal',this)">▤<br>مذكراتي</button>
+  <button data-page="reports" onclick="showPage('reports',this)">▥<br>التقارير</button>
+ </nav>
+</div>
+
+<script>
+"use strict";
+
+/* إعدادات الموقع */
+const PIN="121008";
+const STORAGE_KEY="REBIRTH_V2_DATA";
+const LEVEL_NAMES=["البداية","المحاولة","الاستمرار","الانضباط","القوة","الثبات","التقدم","التميز","الإنجاز","نسخة أفضل"];
+const MESSAGES=[
+"هتوب إلى الله، حتى لو أذنبت 100 مرة. لن أسمح لليأس أن يوقفني.",
+"التعثر لا يمحو كل الخطوات التي سبقت. ابدأ من جديد.",
+"لا تجعل لحظة ضعف تحدد نظرتك لنفسك.",
+"كل يوم جديد فرصة لتتعلم وتتحسن.",
+"لو اليوم كان صعبًا، بكرة فرصة جديدة. خليك مستمر.",
+"التغيير يحتاج وقتًا وصبرًا. لا تستعجل النتائج.",
+"اطلب العون من ربنا، وخد بالأسباب، وابتعد عن المشتتات.",
+"مش مطلوب منك الكمال. المطلوب منك الصدق والمحاولة.",
+"تقدمك الحقيقي هو أنك تتعلم من يومك وتكمل.",
+"لا تقارن نفسك بغيرك. ركز على خطواتك أنت."
+];
+const HABITS=[
+["prayer","المحافظة على الصلاة"],
+["study","الدراسة والتعلم"],
+["movement","حركة أو نشاط بدني"],
+["sleep","نوم وراحة كافية"],
+["reading","قراءة أو ذكر"],
+["phone","تقليل وقت الهاتف"]
+];
+const ACHIEVEMENTS=[
+["first","أول خطوة","سجل أول يوم في رحلتك",1],
+["three","بداية الاستمرار","سجل 3 أيام",3],
+["seven","أسبوع من المحاولة","سجل 7 أيام",7],
+["fifteen","نصف شهر","سجل 15 يومًا",15],
+["thirty","شهر من التقدم","سجل 30 يومًا",30],
+["habits","بناء العادات","أنجز 10 عادات",10],
+["notes","التأمل","اكتب أول مذكرة",1]
+];
+
+function emptyData(){
+ return {days:{},habits:{},points:0,journals:[],goals:{},created:new Date().toISOString()};
+}
+let data;
+try{
+ data=JSON.parse(localStorage.getItem(STORAGE_KEY))||emptyData();
+ if(!data.days||!data.habits) data=emptyData();
+}catch(e){data=emptyData()}
+
+function save(){
+ localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+}
+function keyDate(date=new Date()){
+ return date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0");
+}
+function getTodayHabits(){
+ return data.habits[keyDate()]||{};
+}
+function getLevel(){
+ return Math.min(10,Math.floor(data.points/100)+1);
+}
+function getStreak(){
+ let count=0,d=new Date();
+ while(data.days[keyDate(d)]==="good"){
+  count++;d.setDate(d.getDate()-1);
+ }
+ return count;
+}
+function login(){
+ const value=document.getElementById("pin").value;
+ if(value===PIN){
+  document.getElementById("login").style.display="none";
+  document.getElementById("app").style.display="block";
+  renderAll();
+ }else{
+  document.getElementById("loginError").textContent="الرمز غير صحيح، حاول مرة أخرى.";
+ }
+}
+document.getElementById("pin").addEventListener("keydown",e=>{
+ if(e.key==="Enter")login();
+});
+function lockApp(){
+ document.getElementById("app").style.display="none";
+ document.getElementById("login").style.display="grid";
+ document.getElementById("pin").value="";
+ document.getElementById("loginError").textContent="";
+}
+function showPage(id,button){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll("[data-page]").forEach(b=>b.classList.remove("active"));
+ document.querySelectorAll('[data-page="'+id+'"]').forEach(b=>b.classList.add("active"));
+ const names={home:"نظرة عامة",journey:"رحلتي اليومية",habits:"العادات الإيجابية",calendar:"التقويم",levels:"المستويات والإنجازات",journal:"مذكراتي",reports:"التقارير"};
+ document.getElementById("pageTitle").textContent=names[id]||"REBIRTH";
+ renderAll();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function recordDay(status){
+ const k=keyDate();
+ const old=data.days[k];
+ if(old===status){
+  alert("هذا التسجيل موجود بالفعل.");
+  return;
+ }
+ if(old==="good")data.points=Math.max(0,data.points-10);
+ if(old==="hard")data.points=Math.max(0,data.points-2);
+ data.days[k]=status;
+ data.points+=status==="good"?10:2;
+ save();renderAll();
+ const msg=status==="good"
+ ?"أحسنت! خطوة جديدة تُضاف إلى رحلتك. استمر دون ضغط على نفسك."
+ :"اليوم كان صعبًا، لكن ده مش نهاية الطريق. خذ وقتك وارجع لخطواتك من جديد.";
+ document.getElementById("homeMessage").textContent=msg;
+ document.getElementById("journeyMessage").textContent=msg;
+}
+function habitChange(el){
+ const k=keyDate();
+ if(!data.habits[k])data.habits[k]={};
+ const old=!!data.habits[k][el.dataset.habit];
+ if(old===el.checked)return;
+ data.habits[k][el.dataset.habit]=el.checked;
+ data.points=Math.max(0,data.points+(el.checked?2:-2));
+ save();renderAll();
+}
+document.querySelectorAll("[data-habit]").forEach(el=>{
+ el.addEventListener("change",()=>habitChange(el));
+});
+function newMessage(){
+ const message=MESSAGES[Math.floor(Math.random()*MESSAGES.length)];
+ document.getElementById("homeMessage").textContent=message;
+ document.getElementById("journeyMessage").textContent=message;
+}
+function saveGoal(){
+ const val=document.getElementById("smallGoal").value.trim();
+ if(!val){alert("اكتب هدفًا صغيرًا أولًا.");return;}
+ data.goals[keyDate()]=val;save();
+ document.getElementById("goalStatus").textContent="تم حفظ هدف اليوم: "+val;
+}
+function saveJournal(){
+ const val=document.getElementById("journalText").value.trim();
+ if(!val){alert("اكتب شيئًا في مذكرتك أولًا.");return;}
+ data.journals.unshift({text:val,date:new Date().toISOString()});
+ data.points+=5;
+ document.getElementById("journalText").value="";
+ document.getElementById("journalStatus").textContent="تم حفظ مذكرتك وإضافة 5 نقاط.";
+ save();renderAll();
+}
+function renderJournals(){
+ const list=document.getElementById("journalList");
+ document.getElementById("journalCount").textContent=data.journals.length+" مذكرة";
+ if(!data.journals.length){
+  list.innerHTML='<p class="muted">لا توجد مذكرات حتى الآن.</p>';return;
+ }
+ list.innerHTML="";
+ data.journals.slice(0,30).forEach(item=>{
+  const div=document.createElement("div");div.className="note-item";
+  const date=new Date(item.date).toLocaleString("ar-EG");
+  const strong=document.createElement("strong");strong.textContent=date;
+  const p=document.createElement("p");p.textContent=item.text;
+  p.style.color="#bfc2ca";
+  div.append(strong,p);list.appendChild(div);
+ });
+}
+function renderHabits(){
+ const habits=getTodayHabits();
+ let count=0;
+ document.querySelectorAll("[data-habit]").forEach(el=>{
+  el.checked=!!habits[el.dataset.habit];
+  if(el.checked)count++;
+ });
+ const percent=count/6*100;
+ document.getElementById("habitBar").style.width=percent+"%";
+ document.getElementById("habitSummary").textContent=count+" من 6 عادات تم إنجازها اليوم.";
+ document.getElementById("homeHabitCount").textContent=count+"/6";
+ document.getElementById("homeHabitBar").style.width=percent+"%";
+ document.getElementById("smallGoal").value=data.goals[keyDate()]||"";
+}
+function renderCalendar(){
+ const now=new Date();
+ const year=calendarDate.getFullYear(),month=calendarDate.getMonth();
+ document.getElementById("monthTitle").textContent=new Date(year,month,1).toLocaleDateString("ar-EG",{month:"long",year:"numeric"});
+ const grid=document.getElementById("calendarGrid");grid.innerHTML="";
+ ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"].forEach(name=>{
+  const el=document.createElement("div");el.className="day-name";el.textContent=name;grid.appendChild(el);
+ });
+ const first=new Date(year,month,1).getDay();
+ const last=new Date(year,month+1,0).getDate();
+ for(let i=0;i<first;i++)grid.appendChild(document.createElement("div"));
+ for(let n=1;n<=last;n++){
+  const date=new Date(year,month,n),key=keyDate(date),status=data.days[key];
+  const el=document.createElement("div");
+  el.className="day"+(status==="good"?" good":status==="hard"?" hard":"")+(key===keyDate()?" today":"");
+  el.textContent=n;
+  el.title=status==="good"?"حققت هدفك":status==="hard"?"يوم صعب":"غير مسجل";
+  grid.appendChild(el);
+ }
+}
+let calendarDate=new Date();
+function changeMonth(offset){
+ calendarDate.setMonth(calendarDate.getMonth()+offset);
+ renderCalendar();
+}
+function renderLevels(){
+ const level=getLevel(),within=data.points%100;
+ const names=LEVEL_NAMES;
+ document.getElementById("levelNumber").textContent=level;
+ document.getElementById("levelPoints").textContent=data.points;
+ document.getElementById("levelDays").textContent=Object.keys(data.days).length;
+ document.getElementById("levelHeading").textContent="المستوى "+level+" — "+names[level-1];
+ document.getElementById("levelProgress").style.width=(level===10?100:within)+"%";
+ document.getElementById("levelCaption").textContent=level===10?"وصلت إلى المستوى الأعلى!":within+" / 100 XP للمستوى التالي.";
+ const habitsDone=Object.values(data.habits).reduce((sum,obj)=>sum+Object.values(obj).filter(Boolean).length,0);
+ const unlocked=[
+  Object.keys(data.days).length>=1,
+  Object.keys(data.days).length>=3,
+  Object.keys(data.days).length>=7,
+  Object.keys(data.days).length>=15,
+  Object.keys(data.days).length>=30,
+  habitsDone>=10,
+  data.journals.length>=1
+ ];
+ document.getElementById("achievementCount").textContent=unlocked.filter(Boolean).length;
+ const box=document.getElementById("achievements");box.innerHTML="";
+ ACHIEVEMENTS.forEach((a,i)=>{
+  const div=document.createElement("div");
+  div.className="achievement"+(unlocked[i]?" unlocked":"");
+  const strong=document.createElement("strong");
+  strong.textContent=(unlocked[i]?"✦ ":"🔒 ")+a[1];
+  const span=document.createElement("span");span.textContent=a[2];
+  div.append(strong,span);box.appendChild(div);
+ });
+ document.getElementById("sLevel").textContent=level;
+ document.getElementById("sLevelName").textContent=names[level-1];
+ document.getElementById("sPoints").textContent=data.points;
+}
+function renderReports(){
+ const entries=Object.entries(data.days).sort((a,b)=>b[0].localeCompare(a[0]));
+ const good=entries.filter(x=>x[1]==="good").length;
+ const hard=entries.filter(x=>x[1]==="hard").length;
+ const total=entries.length;
+ document.getElementById("reportGood").textContent=good;
+ document.getElementById("reportHard").textContent=hard;
+ document.getElementById("reportRate").textContent=total?Math.round(good/total*100)+"%":"0%";
+ document.getElementById("reportXP").textContent=data.points;
+ const body=document.getElementById("reportTable");body.innerHTML="";
+ entries.slice(0,30).forEach(([date,status])=>{
+  const tr=document.createElement("tr");
+  const habits=Object.values(data.habits[date]||{}).filter(Boolean).length;
+  const td1=document.createElement("td");td1.textContent=date;
+  const td2=document.createElement("td");
+  const badge=document.createElement("span");badge.className="badge "+(status==="good"?"good":"hard");
+  badge.textContent=status==="good"?"حققت الهدف":"يوم صعب";td2.appendChild(badge);
+  const td3=document.createElement("td");td3.textContent=habits+" / 6";
+  tr.append(td1,td2,td3);body.appendChild(tr);
+ });
+}
+function renderAll(){
+ const now=new Date();
+ const date=now.toLocaleDateString("ar-EG",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+ document.getElementById("dateLabel").textContent=date;
+ document.getElementById("homeDate").textContent=date;
+ const today=data.days[keyDate()];
+ const status=today==="good"?"سجلت أنك حققت هدفك اليوم. أحسنت.":today==="hard"?"سجلت أن اليوم كان صعبًا. ابدأ من جديد.":"لم تسجل اليوم بعد.";
+ document.getElementById("homeStatus").textContent=status;
+ document.getElementById("journeyStatus").textContent=status;
+ document.getElementById("sStreak").textContent=getStreak();
+ document.getElementById("sTotal").textContent=Object.keys(data.days).length;
+ renderHabits();renderCalendar();renderLevels();renderJournals();renderReports();
+}
+function backup(){
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");a.href=url;a.download="REBIRTH-backup.json";a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function restore(event){
+ const file=event.target.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const parsed=JSON.parse(reader.result);
+   if(!parsed.days||!parsed.habits||typeof parsed.points!=="number")throw new Error();
+   if(!confirm("سيتم استبدال بياناتك الحالية بالنسخة المختارة. هل تريد المتابعة؟"))return;
+   data=parsed;save();renderAll();alert("تمت استعادة النسخة الاحتياطية.");
+  }catch(e){alert("الملف غير صالح أو غير متوافق.");}
+ };
+ reader.readAsText(file);event.target.value="";
+}
+renderAll();
+</script>
+</body>
+</html>
