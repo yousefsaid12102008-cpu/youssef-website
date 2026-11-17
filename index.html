@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <title>RailPass EG | إدارة اشتراك القطار</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="brand-mark">RP<span>EG</span></div>
+      <div class="eyebrow">SMART RAILWAY COMPANION</div>
+      <h1 id="loginTitle">مرحباً بعودتك</h1>
+      <p class="muted" id="loginHint">سجّل دخولك لفتح لوحة RailPass EG</p>
+      <form id="loginForm">
+        <label>اسم المستخدم</label><input id="loginUser" autocomplete="username" value="youssef" required>
+        <label>كلمة المرور</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="أدخل كلمة المرور" required>
+        <button class="primary wide" type="submit" id="loginButton">تسجيل الدخول</button>
+      </form>
+      <p class="tiny muted" id="firstRunNote">أول مرة؟ اكتب كلمة مرور جديدة وسيتم إعداد الدخول على هذا الجهاز.</p>
+      <p class="tiny warning">الحفظ محلي على هذا المتصفح والجهاز. استخدم النسخ الاحتياطي بانتظام.</p>
+    </div>
+  </div>
+
+  <div id="app" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="side-brand"><div class="brand-mark small">RP<span>EG</span></div><div><b>RailPass EG</b><small>SMART SAVINGS</small></div></div>
+      <div class="profile">
+        <img src="assets/youssef.jpg" alt="صورة يوسف"><div><b>يوسف</b><small>مالك الحساب</small></div>
+      </div>
+      <nav>
+        <button class="nav-item active" data-page="dashboard">▦ <span>لوحة التحكم</span></button>
+        <button class="nav-item" data-page="trips">⇄ <span>سجل الرحلات</span></button>
+        <button class="nav-item" data-page="prices">▤ <span>جدول الأسعار</span></button>
+        <button class="nav-item" data-page="stats">▥ <span>الإحصائيات</span></button>
+        <button class="nav-item" data-page="settings">⚙ <span>الإعدادات</span></button>
+      </nav>
+      <div class="side-bottom"><div class="local-status"><i></i> يعمل بالحفظ المحلي</div><button id="logoutBtn" class="logout">↪ تسجيل الخروج</button></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><div><div class="eyebrow">RAILPASS / YOUR JOURNEY</div><h1 id="pageTitle">لوحة التحكم</h1></div><div class="top-actions"><span id="todayLabel"></span><button id="themeBtn" class="icon-btn" title="تغيير المظهر">☾</button><button class="avatar-btn" id="profileJump"><img src="assets/youssef.jpg" alt="يوسف"></button></div></header>
+
+      <section id="page-dashboard" class="page">
+        <div class="welcome panel"><div><div class="eyebrow gold">YOUR SUBSCRIPTION OVERVIEW</div><h2>أهلاً يا يوسف 👋</h2><p>تابع رحلاتك واعرف اشتراكك وفّرلك كام.</p></div><div class="welcome-train">🚆</div></div>
+        <div class="metrics">
+          <article class="metric"><span>قيمة الاشتراك</span><strong id="mCost">0 ج.م</strong><small>التكلفة المسجلة</small></article>
+          <article class="metric"><span>عدد الرحلات</span><strong id="mTrips">0</strong><small>رحلة مسجلة</small></article>
+          <article class="metric"><span>قيمة التذاكر المكافئة</span><strong id="mValue">0 ج.م</strong><small>إجمالي قيمة الرحلات</small></article>
+          <article class="metric"><span>صافي التوفير</span><strong id="mSaving">0 ج.م</strong><small id="mSavingHint">بعد خصم قيمة الاشتراك</small></article>
+        </div>
+        <div class="dashboard-grid">
+          <article class="panel progress-panel"><div class="panel-head"><div><div class="eyebrow">BREAK-EVEN TRACKER</div><h3>استرداد قيمة الاشتراك</h3></div><span id="breakStatus" class="status red">لم تسترد القيمة بعد</span></div>
+            <div class="progress-numbers"><div><strong id="progressValue">0%</strong><small>نسبة الاسترداد</small></div><div class="align-left"><strong id="remaining">0 ج.م</strong><small>المتبقي للاسترداد</small></div></div>
+            <div class="progress-track"><div id="progressBar"></div></div><p class="muted" id="progressCaption">سجّل رحلاتك لمتابعة تقدمك.</p>
+          </article>
+          <article class="panel subscription-panel"><div class="panel-head"><div><div class="eyebrow">ACTIVE PASS</div><h3>بيانات الاشتراك</h3></div><span class="pass-icon">✦</span></div>
+            <div class="sub-row"><span>نوع الاشتراك</span><b id="subType">شهري</b></div><div class="sub-row"><span>تاريخ البداية</span><b id="subStart">—</b></div><div class="sub-row"><span>تاريخ النهاية</span><b id="subEnd">—</b></div><div class="sub-row"><span>الأيام المتبقية</span><b id="daysLeft">—</b></div>
+            <button class="text-btn" data-goto="settings">إدارة الاشتراك ←</button>
+          </article>
+        </div>
+        <div class="panel recent-panel"><div class="panel-head"><div><div class="eyebrow">LATEST ACTIVITY</div><h3>آخر الرحلات</h3></div><button class="secondary" data-goto="trips">عرض السجل</button></div><div id="recentTrips" class="table-wrap"></div></div>
+      </section>
+
+      <section id="page-trips" class="page hidden">
+        <div class="section-actions"><div><div class="eyebrow">JOURNEY HISTORY</div><h2>سجل الرحلات</h2><p class="muted">كل رحلة تسجلها بتتضاف لحساب التوفير تلقائياً.</p></div><button id="addTripBtn" class="primary">＋ إضافة رحلة</button></div>
+        <div class="panel filters"><input id="tripSearch" placeholder="ابحث بالمحطة أو نوع القطار..."><input id="tripMonth" type="month" aria-label="فلترة بالشهر"><button id="clearFilters" class="secondary">مسح الفلاتر</button></div>
+        <div class="panel"><div id="tripsTable" class="table-wrap"></div></div>
+      </section>
+
+      <section id="page-prices" class="page hidden">
+        <div class="section-actions"><div><div class="eyebrow">FARE DIRECTORY</div><h2>جدول الأسعار</h2><p class="muted">أضف أسعار الخطوط لتعبئتها تلقائياً عند تسجيل الرحلة.</p></div></div>
+        <div class="panel form-panel"><h3>إضافة / تعديل خط</h3><form id="priceForm" class="form-grid"><input id="priceFrom" placeholder="محطة البداية" required><input id="priceTo" placeholder="محطة النهاية" required><input id="priceAmount" type="number" min="0" step=".5" placeholder="سعر التذكرة بالجنيه" required><button class="primary" type="submit">حفظ السعر</button></form></div>
+        <div class="panel"><div id="pricesTable" class="table-wrap"></div></div>
+      </section>
+
+      <section id="page-stats" class="page hidden">
+        <div class="eyebrow">INSIGHTS & PERFORMANCE</div><h2>الإحصائيات</h2>
+        <div class="metrics stats-metrics"><article class="metric"><span>متوسط قيمة الرحلة</span><strong id="avgFare">0 ج.م</strong></article><article class="metric"><span>أكثر خط استخداماً</span><strong id="topRoute">—</strong></article><article class="metric"><span>أيام حتى الانتهاء</span><strong id="statsDays">—</strong></article></div>
+        <div class="panel"><div class="panel-head"><h3>التوفير حسب الشهر</h3><span class="muted">قيمة التذاكر المسجلة</span></div><div id="monthlyChart" class="chart"></div></div>
+        <div class="panel"><h3>الإنجازات</h3><div id="achievements" class="achievements"></div></div>
+      </section>
+
+      <section id="page-settings" class="page hidden">
+        <div class="eyebrow">PERSONALIZE YOUR PASS</div><h2>الإعدادات</h2>
+        <div class="panel form-panel"><h3>بيانات الاشتراك</h3><form id="settingsForm" class="form-grid">
+          <label>قيمة الاشتراك بالجنيه<input id="settingCost" type="number" min="0" step=".01" required></label>
+          <label>نوع الاشتراك<select id="settingType"><option>شهري</option><option>ربع سنوي</option><option>سنوي</option><option>أخرى</option></select></label>
+          <label>تاريخ البداية<input id="settingStart" type="date" required></label><label>تاريخ النهاية<input id="settingEnd" type="date" required></label>
+          <button class="primary" type="submit">حفظ بيانات الاشتراك</button>
+        </form></div>
+        <div class="panel form-panel"><h3>النسخ الاحتياطي والبيانات</h3><p class="muted">احتفظ بنسخة خارج الجهاز لاستعادة رحلاتك عند تغيير المتصفح أو الهاتف.</p><div class="button-row"><button id="exportBackup" class="secondary">تنزيل نسخة JSON</button><label class="file-button secondary">استيراد نسخة<input id="importBackup" type="file" accept="application/json"></label><button id="exportCsv" class="secondary">تصدير الرحلات CSV</button><button id="printReport" class="secondary">طباعة / PDF</button></div></div>
+        <div class="panel form-panel"><h3>إدارة الحساب المحلي</h3><p class="muted">يمكنك تغيير كلمة مرور الدخول على هذا الجهاز.</p><form id="passwordForm" class="form-grid"><input id="newPassword" type="password" minlength="8" placeholder="كلمة مرور جديدة (8 أحرف على الأقل)" required><input id="confirmPassword" type="password" minlength="8" placeholder="تأكيد كلمة المرور" required><button class="primary" type="submit">تغيير كلمة المرور</button></form><p class="tiny warning">هذا قفل محلي للواجهة وليس تشفيراً احترافياً للبيانات.</p></div>
+      </section>
+      <footer>RailPass EG <span>•</span> Travel Smart. Save More.</footer>
+    </main>
+  </div>
+
+  <dialog id="tripDialog"><form id="tripForm" method="dialog" class="dialog-card"><div class="panel-head"><h3 id="tripDialogTitle">إضافة رحلة جديدة</h3><button type="button" id="closeTrip" class="icon-btn">×</button></div><input type="hidden" id="tripId"><label>محطة البداية<input id="tripFrom" list="stationList" required placeholder="مثال: شبرا الخيمة"></label><label>محطة النهاية<input id="tripTo" list="stationList" required placeholder="مثال: طنطا"></label><datalist id="stationList"><option>شبرا الخيمة</option><option>القاهرة</option><option>طنطا</option><option>بنها</option><option>قويسنا</option></datalist><div class="form-grid"><label>نوع القطار<select id="tripType"><option>مكيف</option><option>روسي</option><option>تحيا مصر</option><option>VIP</option><option>ثالثة مكيفة</option><option>أخرى</option></select></label><label>التاريخ والوقت<input id="tripDate" type="datetime-local" required></label></div><label>سعر التذكرة بالجنيه<input id="tripFare" type="number" min="0" step=".5" required></label><small id="fareHint" class="muted">يتم اقتراح السعر من جدول الأسعار عند توفره.</small><label>ملاحظات (اختياري)<textarea id="tripNotes" rows="2" placeholder="أي تفاصيل إضافية..."></textarea></label><div class="dialog-actions"><button type="button" class="secondary" id="cancelTrip">إلغاء</button><button type="submit" class="primary">حفظ الرحلة</button></div></form></dialog>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body></html>
