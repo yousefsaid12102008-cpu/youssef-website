@@ -1,0 +1,873 @@
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<title>RailPass EG</title>
+<style>
+:root{
+--bg:#0a101b;--side:#0d1726;--panel:#121e2f;
+--panel2:#19283c;--line:#2a3a50;--txt:#edf3fa;
+--muted:#91a1b6;--gold:#e7c17c;--gold2:#bd914b;
+--green:#42c59b;--red:#ff7777;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:Tahoma,Arial,sans-serif;font-size:14px}
+body.light{--bg:#f2f5f9;--side:#fff;--panel:#fff;--panel2:#f3f6fa;--line:#e0e6ee;--txt:#172338;--muted:#69788c}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.muted,small{color:var(--muted)}
+.gold{color:var(--gold)}
+h1,h2,h3,p{margin-top:0}
+h1{font-size:25px;margin:5px 0}
+h2{font-size:22px;margin:8px 0}
+h3{font-size:16px;margin:0}
+.eyebrow{font-size:10px;letter-spacing:1.4px;color:var(--muted);font-weight:bold}
+
+/* LOGIN */
+.login-screen{
+min-height:100vh;display:grid;place-items:center;padding:18px;
+background:radial-gradient(circle at 15% 20%,#d5a64b22,transparent 32%),radial-gradient(circle at 90% 90%,#26527a33,transparent 35%),#08111e
+}
+.login-card{
+width:min(410px,100%);padding:32px;background:#121f31;
+border:1px solid #304158;border-radius:22px;
+box-shadow:0 25px 80px #0007
+}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.logo{
+width:50px;height:50px;border-radius:15px;
+background:linear-gradient(140deg,#f3d99f,#ad7e34);
+display:grid;place-items:center;color:#182235;font-weight:900;font-size:18px
+}
+.brand b{font-size:18px}
+.brand small{display:block;color:#9babc0;font-size:10px;letter-spacing:1.3px;margin-top:3px}
+.login-card h1{color:#fff}
+.login-card p{color:#aab8ca}
+.login-card label{display:block;color:#b5c2d2;font-size:12px;margin:12px 0 6px}
+.login-card input{background:#0b1625;color:#fff;border-color:#33455e}
+
+/* APP */
+.app{min-height:100vh}
+.sidebar{
+position:fixed;right:0;top:0;bottom:0;width:240px;
+background:var(--side);border-left:1px solid var(--line);
+padding:22px 16px;display:flex;flex-direction:column;z-index:4
+}
+.side-brand{display:flex;align-items:center;gap:11px;margin-bottom:28px}
+.side-brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:1px;margin-top:4px}
+.profile{
+display:flex;align-items:center;gap:10px;background:var(--panel2);
+padding:12px;border:1px solid var(--line);border-radius:14px;margin-bottom:24px
+}
+.profile img,.avatar img{
+width:42px;height:42px;border-radius:12px;object-fit:cover;background:#34445a
+}
+.profile small{display:block;margin-top:3px}
+.nav{display:grid;gap:6px}
+.nav button{
+border:0;background:transparent;color:var(--muted);
+padding:12px;text-align:right;border-radius:10px;font-weight:bold
+}
+.nav button.active,.nav button:hover{background:var(--panel2);color:var(--gold)}
+.side-foot{margin-top:auto;color:var(--muted);font-size:11px}
+.side-foot button{
+display:block;width:100%;text-align:right;border:0;
+background:none;color:var(--muted);padding:12px 0
+}
+.main{margin-right:240px;padding:25px clamp(14px,3vw,40px);max-width:1600px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.top-actions{display:flex;align-items:center;gap:10px;color:var(--muted)}
+.icon,.avatar{
+border:1px solid var(--line);background:var(--panel2);
+color:var(--txt);border-radius:11px;padding:7px
+}
+.avatar img{display:block;width:33px;height:33px;border-radius:9px}
+.panel,.metric{background:var(--panel);border:1px solid var(--line);border-radius:16px}
+.panel{padding:18px;margin-bottom:16px}
+.hero{
+display:flex;align-items:center;justify-content:space-between;
+min-height:135px;
+background:radial-gradient(circle at 15% 20%,#d7ac5b22,transparent 40%),var(--panel)
+}
+.hero p{margin:7px 0 0;color:var(--muted)}
+.train{font-size:60px;padding:0 20px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+.metric{padding:16px;min-width:0}
+.metric span{display:block;color:var(--muted);font-size:12px}
+.metric strong{display:block;color:var(--gold);font-size:23px;margin:9px 0 3px;overflow-wrap:anywhere}
+.metric small{font-size:10px}
+.two-col{display:grid;grid-template-columns:1.35fr 1fr;gap:14px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:17px}
+.head h3{margin-top:4px}
+.status{padding:6px 10px;border-radius:20px;font-size:10px;white-space:nowrap}
+.good{color:#65d9b3;background:#42c59b1a}
+.bad{color:#ff9999;background:#ff77771a}
+.progress-line{height:10px;background:var(--panel2);border-radius:20px;overflow:hidden;margin:12px 0}
+.progress-line div{height:100%;width:0;background:linear-gradient(90deg,#b98a3e,#f3d99f);border-radius:20px;transition:width .3s}
+.progress-stats{display:flex;justify-content:space-between;margin-top:22px}
+.progress-stats strong{font-size:23px;display:block}
+.progress-stats small{font-size:11px}
+.align-left{text-align:left}
+.subrow{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:9px 0;font-size:12px}
+.subrow span{color:var(--muted)}
+.primary,.secondary{padding:10px 15px;border-radius:10px;font-weight:bold;border:1px solid transparent}
+.primary{background:linear-gradient(135deg,#f0d69a,#c09245);color:#172235}
+.secondary{background:var(--panel2);color:var(--txt);border-color:var(--line)}
+.textbtn{background:none;border:0;color:var(--gold);padding:13px 0 0;font-weight:bold}
+.page-actions{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px;gap:12px}
+.page-actions p{margin:5px 0}
+.filters,.button-row{display:flex;gap:9px;flex-wrap:wrap}
+.filters input{flex:1;min-width:160px}
+input,select,textarea{
+width:100%;background:var(--panel2);border:1px solid var(--line);
+border-radius:9px;padding:11px;color:var(--txt);outline:none
+}
+input:focus,select:focus,textarea:focus{border-color:var(--gold2)}
+.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;align-items:end}
+.formgrid label,.dialog label{display:grid;gap:6px;color:var(--muted);font-size:12px}
+.formgrid button{min-height:42px}
+.tablewrap{overflow:auto}
+table{border-collapse:collapse;width:100%;min-width:570px}
+th,td{text-align:right;padding:12px 9px;border-bottom:1px solid var(--line);font-size:12px;white-space:nowrap}
+th{color:var(--muted)}
+.empty{text-align:center;padding:28px;color:var(--muted)}
+.act{border:1px solid var(--line);background:var(--panel2);color:var(--txt);border-radius:7px;padding:6px 9px;margin-left:4px}
+.chart{height:220px;display:flex;align-items:end;gap:12px;padding:20px 5px 0;border-bottom:1px solid var(--line)}
+.bargrp{flex:1;height:100%;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:6px;min-width:0}
+.bar{width:min(42px,75%);background:linear-gradient(180deg,#f1d79c,#a77932);border-radius:6px 6px 0 0;min-height:2px}
+.bargrp small,.bargrp b{font-size:10px;color:var(--muted)}
+.achievements{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.achievement{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:12px;opacity:.45}
+.achievement.unlocked{opacity:1;border-color:var(--gold2)}
+.achievement b,.achievement small{display:block;margin-top:5px}
+.filelabel{display:inline-flex;align-items:center;cursor:pointer}
+.filelabel input{display:none}
+.dialog{
+border:1px solid var(--line);border-radius:17px;padding:20px;
+background:var(--panel);color:var(--txt);
+width:min(530px,calc(100% - 24px));max-height:90vh;overflow:auto
+}
+.dialog::backdrop{background:#020713bb;backdrop-filter:blur(4px)}
+.dialog form{display:grid;gap:12px}
+.dialog .head{margin:0}
+.dialog-actions{display:flex;justify-content:flex-end;gap:8px}
+.toast{
+position:fixed;bottom:20px;left:20px;background:#1c3047;
+border:1px solid #405775;color:#fff;padding:12px 17px;
+border-radius:10px;opacity:0;transform:translateY(10px);
+transition:.2s;z-index:9;pointer-events:none
+}
+.toast.show{opacity:1;transform:none}
+footer{text-align:center;color:var(--muted);font-size:10px;padding:22px}
+.warning{color:#d6a85b;font-size:11px;line-height:1.7}
+.photo-preview{width:68px;height:68px;object-fit:cover;border-radius:14px;border:1px solid var(--line)}
+@media(max-width:1000px){
+.sidebar{width:205px}.main{margin-right:205px}
+.metrics{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+.sidebar{top:auto;bottom:0;width:100%;height:66px;padding:5px 6px;border:0;border-top:1px solid var(--line)}
+.side-brand,.profile,.side-foot{display:none}
+.nav{display:flex;justify-content:space-around;gap:2px}
+.nav button{flex:1;text-align:center;padding:8px 3px;font-size:11px}
+.main{margin:0;padding:17px 12px 86px}
+.topbar h1{font-size:21px}
+.top-actions #today{display:none}
+.hero{min-height:120px}
+.train{font-size:43px;padding:0 5px}
+.metric{padding:12px}
+.metric strong{font-size:19px}
+.metric span{font-size:10px}
+.two-col{grid-template-columns:1fr}
+.formgrid{grid-template-columns:1fr}
+.page-actions{align-items:flex-start}
+.page-actions .primary{white-space:nowrap}
+.achievements{grid-template-columns:repeat(2,1fr)}
+.metrics{gap:8px}
+}
+@media print{
+.sidebar,.topbar .top-actions,.page-actions button,.filters,.icon,footer{display:none!important}
+.main{margin:0;padding:0}
+.panel,.metric{box-shadow:none;break-inside:avoid}
+body{background:#fff;color:#111}
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="login" class="login-screen">
+<div class="login-card">
+<div class="brand">
+<div class="logo">RP<span style="font-size:10px">EG</span></div>
+<div><b>RailPass EG</b><small>SMART RAILWAY COMPANION</small></div>
+</div>
+<div class="eyebrow">YOUR JOURNEY, YOUR SAVINGS</div>
+<h1>مرحباً بعودتك</h1>
+<p>سجّل دخولك لمتابعة اشتراكك ورحلاتك.</p>
+<form id="loginForm">
+<label>اسم المستخدم</label>
+<input id="username" value="youssef" autocomplete="username" required>
+<label>كلمة المرور</label>
+<input id="password" type="password" placeholder="أدخل كلمة المرور" autocomplete="current-password" required>
+<button class="primary" style="width:100%;margin-top:17px">تسجيل الدخول</button>
+</form>
+<p class="warning">بيانات الدخول: youssef / 121008. هذا قفل واجهة محلي وليس حماية أمنية للبيانات.</p>
+</div>
+</div>
+
+<!-- APPLICATION -->
+<div id="app" class="app hidden">
+<aside class="sidebar">
+<div class="side-brand">
+<div class="logo">RP</div>
+<div><b>RailPass EG</b><small>SMART SAVINGS</small></div>
+</div>
+<div class="profile">
+<img id="sidePhoto" alt="صورة الحساب">
+<div><b>يوسف</b><small>مالك الحساب</small></div>
+</div>
+<nav class="nav">
+<button class="active" data-page="dashboard">▦　لوحة التحكم</button>
+<button data-page="trips">⇄　سجل الرحلات</button>
+<button data-page="prices">▤　جدول الأسعار</button>
+<button data-page="stats">▥　الإحصائيات</button>
+<button data-page="settings">⚙　الإعدادات</button>
+</nav>
+<div class="side-foot">● يعمل بالحفظ المحلي
+<button id="logout">↪ تسجيل الخروج</button>
+</div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+<div><div class="eyebrow">RAILPASS / YOUR JOURNEY</div><h1 id="pageTitle">لوحة التحكم</h1></div>
+<div class="top-actions">
+<span id="today"></span>
+<button class="icon" id="theme" title="تغيير المظهر">☾</button>
+<div class="avatar"><img id="topPhoto" alt="صورة الحساب"></div>
+</div>
+</header>
+
+<!-- DASHBOARD -->
+<section id="page-dashboard" class="page">
+<div class="panel hero">
+<div>
+<div class="eyebrow gold">YOUR SUBSCRIPTION OVERVIEW</div>
+<h2>أهلاً يا يوسف 👋</h2>
+<p>تابع رحلاتك واعرف اشتراكك وفّرلك كام.</p>
+</div>
+<div class="train">🚆</div>
+</div>
+
+<div class="metrics">
+<article class="metric"><span>قيمة الاشتراك</span><strong id="mCost">0 ج.م</strong><small>التكلفة المسجلة</small></article>
+<article class="metric"><span>عدد الرحلات</span><strong id="mTrips">0</strong><small>رحلة مسجلة</small></article>
+<article class="metric"><span>قيمة التذاكر المكافئة</span><strong id="mValue">0 ج.م</strong><small>إجمالي الرحلات</small></article>
+<article class="metric"><span>صافي التوفير</span><strong id="mSaving">0 ج.م</strong><small id="savingHint">بعد خصم الاشتراك</small></article>
+</div>
+
+<div class="two-col">
+<article class="panel">
+<div class="head">
+<div><div class="eyebrow">BREAK-EVEN TRACKER</div><h3>استرداد قيمة الاشتراك</h3></div>
+<span id="breakStatus" class="status bad">لم تسترد القيمة بعد</span>
+</div>
+<div class="progress-stats">
+<div><strong id="percent">0%</strong><small>نسبة الاسترداد</small></div>
+<div class="align-left"><strong id="remaining">0 ج.م</strong><small>المتبقي للاسترداد</small></div>
+</div>
+<div class="progress-line"><div id="progress"></div></div>
+<small id="progressText" class="muted">سجّل رحلاتك لمتابعة تقدمك.</small>
+</article>
+
+<article class="panel">
+<div class="head"><div><div class="eyebrow">ACTIVE PASS</div><h3>بيانات الاشتراك</h3></div><span class="gold">✦</span></div>
+<div class="subrow"><span>النوع</span><b id="subType">شهري</b></div>
+<div class="subrow"><span>بداية الاشتراك</span><b id="subStart">—</b></div>
+<div class="subrow"><span>نهاية الاشتراك</span><b id="subEnd">—</b></div>
+<div class="subrow"><span>الأيام المتبقية</span><b id="daysLeft">—</b></div>
+<button class="textbtn" data-go="settings">إدارة الاشتراك ←</button>
+</article>
+</div>
+
+<article class="panel">
+<div class="head"><h3>آخر الرحلات</h3><button class="secondary" data-go="trips">عرض السجل</button></div>
+<div id="recent" class="tablewrap"></div>
+</article>
+</section>
+
+<!-- TRIPS -->
+<section id="page-trips" class="page hidden">
+<div class="page-actions">
+<div><div class="eyebrow">JOURNEY HISTORY</div><h2>سجل الرحلات</h2><p class="muted">سجّل رحلاتك لمتابعة قيمة التذاكر والتوفير.</p></div>
+<button class="primary" id="addTrip">＋ إضافة رحلة</button>
+</div>
+<div class="panel filters">
+<input id="searchTrip" placeholder="ابحث بالمحطة أو نوع القطار">
+<input id="monthFilter" type="month">
+<button class="secondary" id="clearFilter">مسح الفلاتر</button>
+</div>
+<div class="panel"><div id="tripsTable" class="tablewrap"></div></div>
+</section>
+
+<!-- PRICES -->
+<section id="page-prices" class="page hidden">
+<div class="eyebrow">FARE DIRECTORY</div><h2>جدول الأسعار</h2>
+<p class="muted">أضف أسعار الخطوط ليتم اقتراحها تلقائياً عند تسجيل الرحلة.</p>
+<div class="panel">
+<h3 style="margin-bottom:15px">إضافة أو تعديل خط</h3>
+<form id="priceForm" class="formgrid">
+<label>محطة البداية<input id="priceFrom" required placeholder="شبرا الخيمة"></label>
+<label>محطة النهاية<input id="priceTo" required placeholder="طنطا"></label>
+<label>سعر التذكرة<input id="priceFare" type="number" min="0" step="0.5" required></label>
+<button class="primary">حفظ السعر</button>
+</form>
+</div>
+<div class="panel"><div id="pricesTable" class="tablewrap"></div></div>
+</section>
+
+<!-- STATS -->
+<section id="page-stats" class="page hidden">
+<div class="eyebrow">INSIGHTS & PERFORMANCE</div><h2>الإحصائيات</h2>
+<div class="metrics">
+<article class="metric"><span>متوسط قيمة الرحلة</span><strong id="avgFare">0 ج.م</strong></article>
+<article class="metric"><span>أكثر خط استخداماً</span><strong id="topRoute">—</strong></article>
+<article class="metric"><span>أيام حتى الانتهاء</span><strong id="statsDays">—</strong></article>
+<article class="metric"><span>إجمالي الرحلات</span><strong id="statsTrips">0</strong></article>
+</div>
+<div class="panel"><div class="head"><h3>قيمة التذاكر حسب الشهر</h3><small>آخر 6 أشهر بها رحلات</small></div><div id="chart" class="chart"></div></div>
+<div class="panel"><h3 style="margin-bottom:14px">الإنجازات</h3><div id="achievements" class="achievements"></div></div>
+</section>
+
+<!-- SETTINGS -->
+<section id="page-settings" class="page hidden">
+<div class="eyebrow">PERSONALIZE YOUR PASS</div><h2>الإعدادات</h2>
+<div class="panel">
+<h3 style="margin-bottom:15px">بيانات الاشتراك</h3>
+<form id="settingsForm" class="formgrid">
+<label>قيمة الاشتراك بالجنيه<input id="sCost" type="number" min="0" step="0.01" required></label>
+<label>نوع الاشتراك<select id="sType"><option>شهري</option><option>ربع سنوي</option><option>سنوي</option><option>أخرى</option></select></label>
+<label>تاريخ البداية<input id="sStart" type="date" required></label>
+<label>تاريخ النهاية<input id="sEnd" type="date"></label>
+<button class="primary">حفظ بيانات الاشتراك</button>
+</form>
+</div>
+
+<div class="panel">
+<h3 style="margin-bottom:8px">الصورة الشخصية</h3>
+<p class="muted">اختر صورتك من الجهاز وسيتم حفظها محلياً في المتصفح.</p>
+<div class="button-row" style="align-items:center">
+<img id="settingsPhoto" class="photo-preview" alt="معاينة الصورة">
+<label class="secondary filelabel">اختيار صورة<input id="photoInput" type="file" accept="image/*"></label>
+<button class="secondary" id="removePhoto">إزالة الصورة</button>
+</div>
+</div>
+
+<div class="panel">
+<h3 style="margin-bottom:8px">النسخ الاحتياطي والتقارير</h3>
+<p class="muted">نزّل نسخة احتياطية بانتظام حتى لا تفقد بياناتك إذا تم مسح بيانات المتصفح.</p>
+<div class="button-row">
+<button class="secondary" id="backup">تنزيل نسخة احتياطية JSON</button>
+<label class="secondary filelabel">استيراد نسخة<input id="restore" type="file" accept="application/json"></label>
+<button class="secondary" id="csv">تصدير الرحلات CSV</button>
+<button class="secondary" id="print">طباعة / حفظ PDF</button>
+</div>
+</div>
+
+<div class="panel">
+<h3>الوضع الليلي</h3>
+<p class="muted">يمكنك التبديل بين المظهر الداكن والفاتح من أعلى الصفحة.</p>
+<p class="warning">الحفظ محلي على هذا المتصفح والجهاز فقط. لا تمسح بيانات المتصفح قبل تنزيل نسخة احتياطية. كلمة المرور قفل بسيط وليست تشفيراً للبيانات.</p>
+</div>
+</section>
+<footer>RailPass EG　•　Travel Smart. Save More.</footer>
+</main>
+</div>
+
+<!-- ADD TRIP DIALOG -->
+<dialog id="tripDialog" class="dialog">
+<form id="tripForm">
+<div class="head"><h3 id="dialogTitle">إضافة رحلة</h3><button type="button" class="icon" id="closeDialog">×</button></div>
+<input type="hidden" id="tripId">
+<label>محطة البداية<input id="tripFrom" list="stations" required placeholder="محطة البداية"></label>
+<label>محطة النهاية<input id="tripTo" list="stations" required placeholder="محطة النهاية"></label>
+<datalist id="stations">
+<option>شبرا الخيمة</option><option>القاهرة</option><option>بنها</option><option>قويسنا</option><option>طنطا</option>
+</datalist>
+<div class="formgrid">
+<label>نوع القطار<select id="tripType"><option>مكيف</option><option>روسي</option><option>تحيا مصر</option><option>VIP</option><option>ثالثة مكيفة</option><option>أخرى</option></select></label>
+<label>التاريخ والوقت<input id="tripDate" type="datetime-local" required></label>
+</div>
+<label>سعر التذكرة بالجنيه<input id="tripFare" type="number" min="0" step="0.5" required></label>
+<small id="fareHint" class="muted">السعر يُقترح من جدول الأسعار ويمكن تعديله.</small>
+<label>ملاحظات اختيارية<textarea id="tripNotes" rows="2"></textarea></label>
+<div class="dialog-actions"><button type="button" class="secondary" id="cancelDialog">إلغاء</button><button class="primary">حفظ الرحلة</button></div>
+</form>
+</dialog>
+
+<div id="toast" class="toast"></div>
+
+<script>
+'use strict';
+
+const DB_KEY='railpass_eg_data_v2';
+const USER='youssef';
+const PASS='121008';
+const $=id=>document.getElementById(id);
+
+const todayISO=()=>{
+const d=new Date();
+return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+};
+
+const dateTimeNow=()=>{
+const d=new Date();
+return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);
+};
+
+const fmt=n=>(Number(n)||0).toLocaleString('ar-EG',{maximumFractionDigits:2})+' ج.م';
+const dateFmt=s=>s?new Date(s.length===10?s+'T00:00:00':s).toLocaleDateString('ar-EG'):'—';
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({
+'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[c]));
+
+const defaults=()=>({
+subscription:{cost:2325,type:'شهري',start:todayISO(),end:''},
+trips:[],prices:[],theme:'dark',photo:''
+});
+
+function load(){
+try{
+const raw=localStorage.getItem(DB_KEY);
+if(!raw)return defaults();
+const x=JSON.parse(raw);
+return {
+...defaults(),...x,
+subscription:{...defaults().subscription,...(x.subscription||{})},
+trips:Array.isArray(x.trips)?x.trips:[],
+prices:Array.isArray(x.prices)?x.prices:[]
+};
+}catch(e){
+console.error(e);
+return defaults();
+}
+}
+
+let db=load();
+let editingPrice=-1;
+
+function persist(){
+try{
+localStorage.setItem(DB_KEY,JSON.stringify(db));
+renderAll();
+}catch(e){
+notify('تعذر الحفظ: مساحة التخزين قد تكون ممتلئة. نزّل نسخة احتياطية.');
+console.error(e);
+}
+}
+
+function notify(msg){
+const t=$('toast');
+t.textContent=msg;
+t.classList.add('show');
+clearTimeout(notify.timer);
+notify.timer=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function showApp(){
+$('login').classList.add('hidden');
+$('app').classList.remove('hidden');
+renderAll();
+}
+
+$('loginForm').addEventListener('submit',e=>{
+e.preventDefault();
+if($('username').value.trim()===USER && $('password').value===PASS){
+$('password').value='';
+showApp();
+}else{
+notify('اسم المستخدم أو كلمة المرور غير صحيحة');
+}
+});
+
+function totals(){
+const sum=db.trips.reduce((s,t)=>s+Number(t.fare||0),0);
+const cost=Math.max(0,Number(db.subscription.cost)||0);
+return {
+sum,cost,
+left:Math.max(0,cost-sum),
+saving:Math.max(0,sum-cost),
+pct:cost?Math.min(100,sum/cost*100):100
+};
+}
+
+function remainingDays(){
+if(!db.subscription.end)return '—';
+const end=new Date(db.subscription.end+'T23:59:59');
+return Math.max(0,Math.ceil((end-new Date())/86400000));
+}
+
+function route(t){return t.from+' ⇄ '+t.to}
+
+function table(rows,actions){
+if(!rows.length)return '<div class="empty">لا توجد بيانات لعرضها حتى الآن.</div>';
+return `<table>
+<thead><tr><th>التاريخ</th><th>المسار</th><th>نوع القطار</th><th>سعر التذكرة</th>${actions?'<th>إجراءات</th>':''}</tr></thead>
+<tbody>
+${rows.map(t=>`<tr>
+<td>${dateFmt(t.date)}</td>
+<td>${esc(t.from)} ⇄ ${esc(t.to)}</td>
+<td>${esc(t.type)}</td>
+<td>${fmt(t.fare)}</td>
+${actions?`<td><button class="act" data-edit="${esc(t.id)}">تعديل</button><button class="act" data-del="${esc(t.id)}">حذف</button></td>`:''}
+</tr>`).join('')}
+</tbody></table>`;
+}
+
+function renderDashboard(){
+const t=totals();
+$('mCost').textContent=fmt(t.cost);
+$('mTrips').textContent=db.trips.length.toLocaleString('ar-EG');
+$('mValue').textContent=fmt(t.sum);
+$('mSaving').textContent=fmt(t.saving);
+$('savingHint').textContent=t.sum>=t.cost?'تم استرداد قيمة الاشتراك':'بعد خصم قيمة الاشتراك';
+$('percent').textContent=Math.round(t.pct)+'%';
+$('remaining').textContent=fmt(t.left);
+$('progress').style.width=t.pct+'%';
+$('breakStatus').textContent=t.sum>=t.cost?'تم استرداد قيمة الاشتراك':'لم تسترد القيمة بعد';
+$('breakStatus').className='status '+(t.sum>=t.cost?'good':'bad');
+$('progressText').textContent=t.sum>=t.cost?'مبروك! صافي توفيرك '+fmt(t.saving):'قيمة التذاكر حتى الآن '+fmt(t.sum)+' من '+fmt(t.cost);
+$('subType').textContent=db.subscription.type||'—';
+$('subStart').textContent=dateFmt(db.subscription.start);
+$('subEnd').textContent=dateFmt(db.subscription.end);
+$('daysLeft').textContent=remainingDays()==='—'?'—':remainingDays()+' يوم';
+$('recent').innerHTML=table([...db.trips].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5),false);
+}
+
+function renderTrips(){
+const q=$('searchTrip').value.trim().toLowerCase();
+const m=$('monthFilter').value;
+const rows=[...db.trips]
+.filter(t=>(!q||[t.from,t.to,t.type].join(' ').toLowerCase().includes(q))&&(!m||t.date.slice(0,7)===m))
+.sort((a,b)=>b.date.localeCompare(a.date));
+$('tripsTable').innerHTML=table(rows,true);
+}
+
+function renderPrices(){
+$('pricesTable').innerHTML=db.prices.length?`
+<table><thead><tr><th>من</th><th>إلى</th><th>السعر</th><th>إجراءات</th></tr></thead>
+<tbody>${db.prices.map((p,i)=>`
+<tr><td>${esc(p.from)}</td><td>${esc(p.to)}</td><td>${fmt(p.fare)}</td>
+<td><button class="act" data-price-edit="${i}">تعديل</button><button class="act" data-price-del="${i}">حذف</button></td></tr>`).join('')}
+</tbody></table>`:'<div class="empty">لم تضف أسعاراً بعد.</div>';
+}
+
+function renderStats(){
+const t=totals();
+$('avgFare').textContent=fmt(db.trips.length?t.sum/db.trips.length:0);
+const counts={};
+db.trips.forEach(x=>counts[route(x)]=(counts[route(x)]||0)+1);
+const top=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+$('topRoute').textContent=top?top[0]:'—';
+$('statsDays').textContent=remainingDays()==='—'?'—':remainingDays()+' يوم';
+$('statsTrips').textContent=db.trips.length.toLocaleString('ar-EG');
+
+const months={};
+db.trips.forEach(x=>{
+const k=x.date.slice(0,7);
+months[k]=(months[k]||0)+Number(x.fare||0);
+});
+const entries=Object.entries(months).sort((a,b)=>a[0].localeCompare(b[0])).slice(-6);
+const max=Math.max(1,...entries.map(x=>x[1]));
+
+$('chart').innerHTML=entries.length?entries.map(([m,v])=>`
+<div class="bargrp"><b>${fmt(v)}</b>
+<div class="bar" style="height:${Math.max(3,v/max*135)}px"></div>
+<small>${m}</small></div>`).join(''):'<div class="empty">أضف رحلات لعرض الرسم البياني.</div>';
+
+const ach=[
+['🚉','أول رحلة',db.trips.length>=1],
+['🔟','10 رحلات',db.trips.length>=10],
+['🎫','25 رحلة',db.trips.length>=25],
+['🚆','50 رحلة',db.trips.length>=50],
+['💰','استرداد الاشتراك',t.sum>=t.cost],
+['🏆','100 رحلة',db.trips.length>=100]
+];
+
+$('achievements').innerHTML=ach.map(a=>`
+<div class="achievement ${a[2]?'unlocked':''}">
+<span>${a[0]}</span><b>${a[1]}</b>
+<small>${a[2]?'تم فتح الإنجاز':'لم يفتح بعد'}</small>
+</div>`).join('');
+}
+
+function renderSettings(){
+$('sCost').value=db.subscription.cost;
+$('sType').value=db.subscription.type;
+$('sStart').value=db.subscription.start||'';
+$('sEnd').value=db.subscription.end||'';
+setPhoto(db.photo);
+}
+
+function setPhoto(src){
+const fallback='data:image/svg+xml;charset=UTF-8,'+
+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="#35465c"/><text x="50%" y="58%" text-anchor="middle" font-size="38" fill="#f0d394">ي</text></svg>');
+['sidePhoto','topPhoto','settingsPhoto'].forEach(id=>$(id).src=src||fallback);
+}
+
+function renderAll(){
+document.body.classList.toggle('light',db.theme==='light');
+$('theme').textContent=db.theme==='light'?'☀':'☾';
+$('today').textContent=new Date().toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long'});
+renderDashboard();
+renderTrips();
+renderPrices();
+renderStats();
+renderSettings();
+}
+
+const titles={
+dashboard:'لوحة التحكم',
+trips:'سجل الرحلات',
+prices:'جدول الأسعار',
+stats:'الإحصائيات',
+settings:'الإعدادات'
+};
+
+function go(page){
+document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
+$('page-'+page).classList.remove('hidden');
+document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===page));
+$('pageTitle').textContent=titles[page]||'RailPass EG';
+if(page==='trips')renderTrips();
+}
+
+document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+
+function findPrice(a,b){
+return db.prices.find(p=>
+(p.from.toLowerCase()===a.toLowerCase()&&p.to.toLowerCase()===b.toLowerCase())||
+(p.from.toLowerCase()===b.toLowerCase()&&p.to.toLowerCase()===a.toLowerCase())
+);
+}
+
+function suggest(){
+const p=findPrice($('tripFrom').value.trim(),$('tripTo').value.trim());
+if(p){
+$('tripFare').value=p.fare;
+$('fareHint').textContent='تم اقتراح السعر من جدول الأسعار. يمكنك تعديله.';
+}else{
+$('fareHint').textContent='لا يوجد سعر محفوظ لهذا الخط؛ أدخل السعر يدوياً.';
+}
+}
+
+$('tripFrom').addEventListener('change',suggest);
+$('tripTo').addEventListener('change',suggest);
+
+function openTrip(t){
+$('tripForm').reset();
+$('tripId').value=t?.id||'';
+$('dialogTitle').textContent=t?'تعديل الرحلة':'إضافة رحلة جديدة';
+$('tripFrom').value=t?.from||'';
+$('tripTo').value=t?.to||'';
+$('tripType').value=t?.type||'مكيف';
+$('tripDate').value=t?.date||dateTimeNow();
+$('tripFare').value=t?.fare??'';
+$('tripNotes').value=t?.notes||'';
+$('fareHint').textContent='السعر يُقترح من جدول الأسعار ويمكن تعديله.';
+$('tripDialog').showModal();
+}
+
+$('addTrip').addEventListener('click',()=>openTrip());
+$('closeDialog').addEventListener('click',()=>$('tripDialog').close());
+$('cancelDialog').addEventListener('click',()=>$('tripDialog').close());
+
+$('tripForm').addEventListener('submit',e=>{
+e.preventDefault();
+const id=$('tripId').value||('trip_'+Date.now()+'_'+Math.random().toString(36).slice(2,7));
+const item={
+id,
+from:$('tripFrom').value.trim(),
+to:$('tripTo').value.trim(),
+type:$('tripType').value,
+date:$('tripDate').value,
+fare:Number($('tripFare').value),
+notes:$('tripNotes').value.trim()
+};
+if(!item.from||!item.to||!item.date||!Number.isFinite(item.fare)||item.fare<0){
+notify('راجع بيانات الرحلة والسعر');return;
+}
+const i=db.trips.findIndex(x=>x.id===id);
+if(i>=0)db.trips[i]=item;
+else db.trips.push(item);
+$('tripDialog').close();
+persist();
+notify('تم حفظ الرحلة');
+});
+
+$('tripsTable').addEventListener('click',e=>{
+const edit=e.target.dataset.edit;
+const del=e.target.dataset.del;
+if(edit){
+const t=db.trips.find(x=>x.id===edit);
+if(t)openTrip(t);
+}
+if(del&&confirm('هل تريد حذف الرحلة؟')){
+db.trips=db.trips.filter(x=>x.id!==del);
+persist();
+notify('تم حذف الرحلة');
+}
+});
+
+$('searchTrip').addEventListener('input',renderTrips);
+$('monthFilter').addEventListener('change',renderTrips);
+$('clearFilter').addEventListener('click',()=>{
+$('searchTrip').value='';
+$('monthFilter').value='';
+renderTrips();
+});
+
+$('priceForm').addEventListener('submit',e=>{
+e.preventDefault();
+const p={
+from:$('priceFrom').value.trim(),
+to:$('priceTo').value.trim(),
+fare:Number($('priceFare').value)
+};
+if(!p.from||!p.to||p.from.toLowerCase()===p.to.toLowerCase()||!Number.isFinite(p.fare)||p.fare<0){
+notify('راجع بيانات الخط والسعر');return;
+}
+const duplicate=db.prices.findIndex((x,i)=>i!==editingPrice&&(
+(x.from.toLowerCase()===p.from.toLowerCase()&&x.to.toLowerCase()===p.to.toLowerCase())||
+(x.from.toLowerCase()===p.to.toLowerCase()&&x.to.toLowerCase()===p.from.toLowerCase())
+));
+if(duplicate>=0){notify('هذا الخط موجود بالفعل؛ استخدم تعديل');return;}
+if(editingPrice>=0)db.prices[editingPrice]=p;
+else db.prices.push(p);
+editingPrice=-1;
+$('priceForm').reset();
+persist();
+notify('تم حفظ السعر');
+});
+
+$('pricesTable').addEventListener('click',e=>{
+const ed=e.target.dataset.priceEdit;
+const del=e.target.dataset.priceDel;
+if(ed!==undefined){
+editingPrice=Number(ed);
+const p=db.prices[editingPrice];
+$('priceFrom').value=p.from;
+$('priceTo').value=p.to;
+$('priceFare').value=p.fare;
+window.scrollTo({top:0,behavior:'smooth'});
+}
+if(del!==undefined&&confirm('حذف هذا الخط من جدول الأسعار؟')){
+db.prices.splice(Number(del),1);
+persist();
+notify('تم حذف الخط');
+}
+});
+
+$('settingsForm').addEventListener('submit',e=>{
+e.preventDefault();
+const start=$('sStart').value,end=$('sEnd').value;
+if(end&&start&&end<start){notify('تاريخ النهاية يجب أن يكون بعد البداية');return;}
+db.subscription={
+cost:Number($('sCost').value),
+type:$('sType').value,
+start,end
+};
+persist();
+notify('تم تحديث بيانات الاشتراك');
+});
+
+$('photoInput').addEventListener('change',e=>{
+const f=e.target.files?.[0];
+if(!f)return;
+if(!f.type.startsWith('image/')){notify('اختر ملف صورة صالحاً');return;}
+if(f.size>4*1024*1024){notify('حجم الصورة يجب ألا يتجاوز 4 ميجابايت');return;}
+const r=new FileReader();
+r.onload=()=>{
+db.photo=r.result;
+persist();
+notify('تم حفظ الصورة محلياً');
+};
+r.onerror=()=>notify('تعذر قراءة الصورة');
+r.readAsDataURL(f);
+});
+
+$('removePhoto').addEventListener('click',()=>{
+db.photo='';
+persist();
+notify('تمت إزالة الصورة');
+});
+
+$('theme').addEventListener('click',()=>{
+db.theme=db.theme==='light'?'dark':'light';
+persist();
+});
+
+$('logout').addEventListener('click',()=>{
+$('app').classList.add('hidden');
+$('login').classList.remove('hidden');
+$('password').value='';
+});
+
+function download(name,content,type){
+const blob=new Blob([content],{type});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');
+a.href=url;a.download=name;
+document.body.appendChild(a);
+a.click();a.remove();
+setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+$('backup').addEventListener('click',()=>{
+download('RailPass-EG-backup-'+todayISO()+'.json',JSON.stringify(db,null,2),'application/json');
+});
+
+$('restore').addEventListener('change',async e=>{
+const f=e.target.files?.[0];
+if(!f)return;
+try{
+const x=JSON.parse(await f.text());
+if(!x||!x.subscription||!Array.isArray(x.trips)||!Array.isArray(x.prices))throw new Error('invalid');
+if(!confirm('سيتم استبدال البيانات الحالية بالنسخة المختارة. هل تريد المتابعة؟'))return;
+db={
+...defaults(),...x,
+subscription:{...defaults().subscription,...x.subscription},
+trips:x.trips,prices:x.prices
+};
+persist();
+notify('تم استيراد النسخة الاحتياطية');
+}catch(err){
+notify('ملف النسخة الاحتياطية غير صالح');
+}finally{
+e.target.value='';
+}
+});
+
+$('csv').addEventListener('click',()=>{
+const rows=[
+['التاريخ','محطة البداية','محطة النهاية','نوع القطار','سعر التذكرة','ملاحظات'],
+...db.trips.map(t=>[t.date,t.from,t.to,t.type,t.fare,t.notes||''])
+];
+const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+download('RailPass-EG-trips.csv',csv,'text/csv;charset=utf-8');
+});
+
+$('print').addEventListener('click',()=>window.print());
+
+renderSettings();
+</script>
+</body>
+</html>
